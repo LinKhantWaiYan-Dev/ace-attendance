@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1E3A6D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ACE Attendance">
+<meta name="format-detection" content="telephone=no">
+<title>ACE Attendance</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="theme-color" content="#1E3A6D">
+<meta name="application-name" content="ACE Attendance">
+<meta name="apple-mobile-web-app-title" content="ACE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="author" content="Lin Khant Wai Yan">
+<meta name="copyright" content="© 2026 Lin Khant Wai Yan. All rights reserved.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#FFFFFF; --wash:#F4F6FA; --line:#E1E6EF; --line-2:#CDD5E3;
+  --ink:#152238; --ink-2:#56627A; --ink-3:#8590A6;
+  --navy:#1E3A6D; --navy-2:#2C5296; --navy-wash:#EEF2FA; --red:#B4232C;
+  --ok:#1B7A4D; --ok-bg:#E7F5EE; --late:#965800; --late-bg:#FFF2DC;
+  --bad:#B4232C; --bad-bg:#FCEBEC; --pend:#2C5296; --pend-bg:#EAF0FB;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --r:10px; color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{background:var(--paper);color:var(--ink);margin:0}
+body{font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+h1,h2,h3{font-family:var(--f-display);font-weight:700;line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:1.75rem} h2{font-size:1.3rem} h3{font-size:1.05rem}
+p{margin:0}
+a{color:var(--navy-2)}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{font-size:16px}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+.muted{color:var(--ink-2)} .faint{color:var(--ink-3)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);font-weight:700}
+:focus-visible{outline:3px solid var(--navy-2);outline-offset:2px;border-radius:6px}
+.top{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line)}
+.top::after{content:"";display:block;height:3px;background:linear-gradient(90deg,var(--navy) 0 82%,var(--red) 82% 100%)}
+.top-in{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
+.mark{width:40px;height:40px;border-radius:8px;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:.9rem;letter-spacing:.04em;flex:none;position:relative}
+.mark::after{content:"";position:absolute;left:8px;right:8px;bottom:7px;height:2px;background:var(--red)}
+.school{min-width:0;flex:1}
+.school b{display:block;font-family:var(--f-display);font-size:1rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.school span{font-size:.8rem;color:var(--ink-2)}
+.who{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.role{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:var(--navy-wash);color:var(--navy)}
+.sync{font-size:.75rem;color:var(--ink-3)}
+.sync.off{color:var(--bad);font-weight:700}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:0;background:none;padding:10px 10px;border-bottom:3px solid transparent;color:var(--ink-2);font-weight:700;white-space:nowrap;cursor:pointer;display:flex;gap:6px;align-items:center}
+.tab[aria-current="page"]{color:var(--navy);border-bottom-color:var(--navy)}
+/* phone menu (v1.4.2): tap ☰ Menu instead of scrolling the tabs sideways */
+.menu-btn{display:none;align-items:center;gap:8px;border:1px solid var(--line);background:var(--paper);color:var(--navy);font-weight:700;border-radius:10px;padding:0 14px;min-height:44px;cursor:pointer;flex:none;position:relative;font-size:.95rem}
+.menu-btn svg{width:20px;height:20px}
+.menu-btn .count{position:absolute;top:-7px;right:-7px}
+.drawer{position:fixed;inset:0;z-index:60}
+.drawer .scrim{position:absolute;inset:0;background:rgba(15,23,42,.45)}
+.drawer-in{position:absolute;top:0;right:0;bottom:0;width:min(86vw,340px);background:var(--paper);display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.18);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer-in.anim{animation:slideIn .18s ease-out}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:none}}
+.drawer-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.drawer-h .who-d{flex:1;min-width:0}
+.drawer-h .who-d b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drawer-x{border:0;background:var(--wash);border-radius:10px;width:44px;height:44px;font-size:1.4rem;line-height:1;cursor:pointer;color:var(--ink)}
+.drawer-nav{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:4px;overscroll-behavior:contain}
+.d-item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:none;border-radius:12px;padding:12px 14px;min-height:56px;cursor:pointer;color:var(--ink)}
+.d-item b{display:block;font-size:1rem}
+.d-item small{display:block;color:var(--ink-2);font-size:.8rem;margin-top:1px}
+.d-item .d-t{flex:1;min-width:0}
+.d-item[aria-current="page"]{background:var(--navy-wash)}
+.d-item[aria-current="page"] b{color:var(--navy)}
+.d-item:active{background:var(--wash)}
+.drawer-f{padding:12px 16px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.drawer-f .btn{min-height:46px}
+body.noscroll{overflow:hidden}
+.ex-opt{display:flex;flex-direction:row;align-items:flex-start;gap:12px;padding:12px 4px;border-top:1px solid var(--line);cursor:pointer}
+.ex-opt input{margin-top:4px;width:20px;height:20px;flex:none}
+.ex-opt>span{flex:1;min-width:0}
+/* tablets etc.: if the tabs don't fit the width, use the Menu button instead of sideways scrolling */
+.top.use-menu .menu-btn{display:inline-flex}
+.top.use-menu .tabs,.top.use-menu .who{display:none}
+@media (max-width:760px){
+  .menu-btn{display:inline-flex}
+  .top .tabs,.top .who{display:none}
+  .top-in{flex-wrap:nowrap}
+  .mark{width:36px;height:36px}
+  .school b{font-size:.92rem}
+  .school span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+.count{min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--red);color:#fff;font-size:.72rem;display:inline-grid;place-items:center}
+main{padding-block:22px 60px}
+.stack{display:flex;flex-direction:column;gap:18px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.panel{border:1px solid var(--line);border-radius:var(--r);background:var(--paper);padding:18px}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.btn{border:1px solid var(--line-2);background:var(--paper);border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;text-decoration:none;color:var(--ink)}
+.btn:hover{background:var(--wash)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.primary:hover{background:var(--navy-2)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.danger{color:var(--bad);border-color:#EBC3C6}
+.btn.danger:hover{background:var(--bad-bg)}
+.btn.solid-danger{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.small{min-height:34px;padding:5px 10px;font-size:.88rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field>span{font-size:.85rem;font-weight:700;color:var(--ink-2)}
+.input{width:100%;border:1px solid var(--line-2);border-radius:8px;padding:10px 12px;background:var(--paper);min-height:44px}
+.input:focus{border-color:var(--navy-2);outline:none;box-shadow:0 0 0 3px var(--navy-wash)}
+.input[readonly]{background:var(--wash);color:var(--ink-2)}
+textarea.input{min-height:76px;resize:vertical}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.hint{font-size:.82rem;color:var(--ink-2)}
+.err{color:var(--bad);font-size:.88rem;font-weight:700}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px;font-size:.78rem;font-weight:700;white-space:nowrap}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.c-present,.c-approved{background:var(--ok-bg);color:var(--ok)} .c-late{background:var(--late-bg);color:var(--late)}
+.c-absent,.c-declined{background:var(--bad-bg);color:var(--bad)} .c-excused{background:#EEE8F7;color:#5B3FA0} .c-accepted{background:var(--ok-bg);color:var(--ok)} .c-rejected{background:var(--bad-bg);color:var(--bad)} .c-pending{background:var(--pend-bg);color:var(--pend)}
+.login{min-height:calc(100vh - 80px);display:grid;place-items:center;padding-block:28px}
+.login-card{width:100%;max-width:420px;display:flex;flex-direction:column;gap:18px}
+.bigclock{font-family:var(--f-mono);font-size:2.4rem;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+.tl{position:relative;height:46px;margin-top:22px}
+.tl-tick.up span{top:auto;bottom:26px}
+.tl-bar{position:absolute;left:0;right:0;top:10px;height:12px;border-radius:99px;overflow:hidden;display:flex;background:var(--wash)}
+.tl-bar i{display:block;height:100%}
+.tl-early{background:#DCE4F2} .tl-present{background:#BFE3CF} .tl-late{background:#F6DDB0} .tl-closed{background:#F3C7CB}
+.tl-tick{position:absolute;top:4px;width:2px;height:24px;background:var(--ink);transform:translateX(-1px)}
+.tl-tick span{position:absolute;top:28px;left:50%;transform:translateX(-50%);font-family:var(--f-mono);font-size:.72rem;white-space:nowrap;color:var(--ink-2)}
+.tl-now{position:absolute;top:0;width:14px;height:14px;border-radius:50%;background:var(--red);border:3px solid #fff;box-shadow:0 0 0 1px var(--red);transform:translateX(-7px);transition:left .6s}
+.tl-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--ink-2);margin-top:4px}
+.tl-legend b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.predict{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;border-radius:8px;background:var(--wash)}
+.done{border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--wash)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:620px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.stat b{display:block;font-family:var(--f-mono);font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:.8rem;color:var(--ink-2);font-weight:700}
+.s-pending b{color:var(--pend)} .s-present b{color:var(--ok)} .s-late b{color:var(--late)} .s-declined b{color:var(--bad)}
+.pend-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+@media (max-width:420px){.pend-list{grid-template-columns:minmax(0,1fr)}}
+.pend{border:1px solid var(--line);border-left:4px solid var(--pend);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pend-h{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.note{font-size:.9rem;background:var(--wash);border-radius:6px;padding:8px 10px;overflow-wrap:anywhere}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:8px;overflow:hidden;width:max-content;max-width:100%}
+.seg label{position:relative;cursor:pointer}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.seg span{display:block;padding:7px 14px;font-weight:700;font-size:.9rem;color:var(--ink-2)}
+.seg label+label span{border-left:1px solid var(--line-2)}
+.seg input:checked+span.m-present{background:var(--ok-bg);color:var(--ok)}
+.seg input:checked+span.m-late{background:var(--late-bg);color:var(--late)}
+.seg input:focus-visible+span{outline:3px solid var(--navy-2);outline-offset:-3px}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.rows{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.rec{display:grid;grid-template-columns:120px minmax(0,1fr) 92px 92px 104px 84px;gap:10px;align-items:center;padding:11px 14px;border-top:1px solid var(--line)}
+.rec:first-child{border-top:0}
+.rec.head{background:var(--wash);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--ink-2);padding-block:8px}
+.rec .who b,.rec .who span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec .who span{font-size:.84rem;color:var(--ink-2)}
+.rec .act{text-align:right}
+.rec .k{display:none}
+@media (max-width:820px){
+  .rec.head{display:none}
+  .rec{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"who act" "date time" "mark status";row-gap:6px}
+  .rec .who{grid-area:who}.rec .act{grid-area:act}.rec .c-d{grid-area:date}.rec .c-t{grid-area:time;text-align:right}
+  .rec .c-m{grid-area:mark}.rec .c-s{grid-area:status;text-align:right}
+  .rec .k{display:inline;color:var(--ink-3);font-size:.78rem;margin-right:4px}
+}
+.srow{display:grid;grid-template-columns:minmax(0,1fr) repeat(4,68px);gap:8px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.srow:first-child{border-top:0}
+.srow.head{background:var(--wash);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;color:var(--ink-2);padding-block:8px}
+.srow .who b,.srow .who span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow .who span{font-size:.84rem;color:var(--ink-2)}
+@media (max-width:480px){.srow{grid-template-columns:minmax(0,1fr) repeat(4,48px);gap:4px;padding-inline:10px}}
+.empty{padding:28px 16px;text-align:center;color:var(--ink-2);display:flex;flex-direction:column;gap:6px;align-items:center}
+.empty b{color:var(--ink);font-family:var(--f-display);font-size:1.05rem}
+.list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line);flex-wrap:wrap}
+.li:first-child{border-top:0}
+.li>div{min-width:0}
+.tag{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--wash);color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+.tag.off{background:var(--bad-bg);color:var(--bad)}
+.switch{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:var(--r);cursor:pointer}
+.switch input{width:22px;height:22px;accent-color:var(--navy);flex:none;margin-top:2px}
+.hist{display:flex;flex-direction:column;gap:8px;font-size:.88rem;max-height:220px;overflow:auto;padding-right:4px}
+.hist div{border-left:2px solid var(--line-2);padding-left:10px}
+.copyrow{display:flex;gap:8px;align-items:center}
+.copyrow input{flex:1;min-width:0}
+#modal{position:fixed;inset:0;z-index:50}
+.scrim{position:absolute;inset:0;background:rgba(21,34,56,.42)}
+.sheet{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 24px));max-height:calc(100% - 40px);overflow:auto;background:var(--paper);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 18px 50px rgba(21,34,56,.25)}
+@media (max-width:560px){.sheet{top:auto;bottom:0;transform:translateX(-50%);width:100%;border-radius:16px 16px 0 0;max-height:92%;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}}
+.sheet-f{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;flex-direction:column;gap:8px;width:min(440px,calc(100% - 24px));pointer-events:none}
+.toast{background:var(--ink);color:#fff;padding:11px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);font-weight:700;font-size:.92rem;pointer-events:auto;border-left:5px solid var(--navy-2)}
+.toast.ok{border-left-color:#3FBF85}.toast.bad{border-left-color:#FF6B73}.toast.new{border-left-color:#F2B24C}
+.foot .copy{color:var(--ink-2)}
+.foot{border-top:1px solid var(--line);padding-block:14px;font-size:.8rem;color:var(--ink-3);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+textarea.csv{font-family:var(--f-mono);font-size:12px;min-height:200px;white-space:pre;overflow:auto}
+.loading{display:grid;place-items:center;min-height:60vh;color:var(--ink-2)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* connection + live indicator */
+.live{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--ink-2)}
+.dot{width:8px;height:8px;border-radius:50%;background:#2FA36B;flex:none}
+.dot.demo{background:#C98A1B} .dot.off{background:var(--red)}
+.conn{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;font-size:.9rem;display:flex;flex-direction:column;gap:8px;background:var(--wash)}
+.conn.ok{border-color:#9DD3B6} .conn.bad{border-color:#EBC3C6} .conn.demo{border-color:#EED29A}
+.conn-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) auto;gap:8px}
+@media (max-width:620px){.conn-row{grid-template-columns:minmax(0,1fr)}}
+.srow.stu{grid-template-columns:36px minmax(0,1fr) 110px 110px auto}
+.srow.stu .who{display:flex;flex-wrap:wrap;column-gap:10px;align-items:baseline}
+.srow.stu .who b{white-space:normal;overflow:visible}
+@media (max-width:700px){.srow.stu{grid-template-columns:28px minmax(0,1fr) auto;row-gap:6px}.srow.stu>:nth-child(4){display:none}.srow.stu>:nth-child(5){grid-column:2/-1;justify-content:flex-start!important}.srow.stu.head>:nth-child(5){display:none}}
+/* alerts + MC */
+.alertbox{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:var(--r);border:1px solid #EED29A;background:var(--late-bg);color:#5d3a00}
+.alertbox.lvl2,.alertbox.lvl3{border-color:#EBC3C6;background:var(--bad-bg);color:#7a1820}
+.alertbox.lvl3 b{font-size:1.05rem}
+.filepick{display:flex;align-items:center;gap:10px;border:1.5px dashed var(--line-2);border-radius:var(--r);padding:14px;cursor:pointer;color:var(--navy-2);font-weight:700;position:relative}
+.filepick input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.filepick:focus-within{outline:3px solid var(--navy-2);outline-offset:2px}
+.lv-prev{max-height:180px;width:auto;border-radius:8px;border:1px solid var(--line);margin-top:8px}
+.mc-img{width:100%;max-height:60vh;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:var(--wash)}
+/* messages */
+.thread{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;padding:2px}
+.bubble{max-width:85%;padding:8px 11px;border-radius:12px;font-size:.92rem;overflow-wrap:anywhere;border:1px solid var(--line)}
+.bubble.stu{align-self:flex-start;background:var(--wash)}
+.bubble.staff{align-self:flex-end;background:var(--navy-wash);border-color:#D6E0F2}
+.bubble-h{font-size:.76rem;margin-bottom:2px}
+.reply{display:flex;gap:8px;align-items:flex-end}
+.reply textarea{min-height:44px}
+.msgbox{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:var(--r);transition:border-color .3s,background .3s}
+.msgbox.late{border-color:#E8B65A;background:var(--late-bg)}
+.msgbox.late .field>span{color:var(--late)}
+.quick{display:flex;flex-wrap:wrap;gap:6px}
+.qchip{border:1px solid var(--line-2);background:var(--paper);border-radius:99px;padding:5px 11px;font-size:.84rem;cursor:pointer;min-height:34px}
+.qchip:hover{background:var(--wash)}
+.linkbtn{border:0;background:none;padding:0;color:var(--navy-2);font-weight:700;cursor:pointer;font-size:.86rem;text-decoration:underline;text-underline-offset:2px}
+/* calendar */
+.cal-wrap{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:900px){.cal-wrap{grid-template-columns:minmax(0,1fr)}}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-w{font-size:.72rem;font-weight:700;color:var(--ink-2);text-align:center;padding-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.cal-c{min-height:74px;border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:5px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;cursor:pointer;text-align:left;min-width:0;font:inherit;color:inherit}
+.cal-c.empty{border:0;background:none;cursor:default}
+.cal-c.off{background:#EEF0F4;color:var(--ink-3)}
+.cal-c.k-ok{background:#EAF6EF}.cal-c.k-warn{background:#FFF4E0}.cal-c.k-bad{background:#FBE9EB}
+.cal-c.k-present{background:#DFF2E7}.cal-c.k-late{background:#FCEBCB}.cal-c.k-absent,.cal-c.k-declined,.cal-c.k-miss{background:#F8DCDF}.cal-c.k-pending{background:var(--pend-bg)}
+.cal-c.today{box-shadow:inset 0 0 0 2px var(--navy-2)}
+.cal-c.sel{outline:3px solid var(--red);outline-offset:-1px}
+.cal-d{font-weight:700;font-size:.85rem}
+.cal-mod{font-size:.66rem;font-weight:700;letter-spacing:.03em;color:var(--navy);background:var(--navy-wash);border-radius:4px;padding:0 4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:520px){.cal-mod{font-size:.56rem;letter-spacing:0;padding:0 2px;text-overflow:clip}}
+.cal-n{font-family:var(--f-mono);font-size:.82rem;font-weight:600}
+.cal-s{font-size:.7rem;color:var(--ink-2);line-height:1.2}
+.cal-big{font-family:var(--f-mono);font-size:1.2rem;font-weight:600}
+.cal-bar{display:block;width:100%;height:5px;border-radius:9px;background:rgba(21,34,56,.1);overflow:hidden}.cal-bar i{display:block;height:100%;background:var(--ok)}
+@media (max-width:520px){.cal-c{min-height:52px;padding:3px}.cal-s{display:none}.cal-n{font-size:.7rem}.cal-d{font-size:.76rem}.cal-big{font-size:1rem}}
+.namegrid{display:flex;flex-wrap:wrap;gap:6px}
+.nm{font-size:.84rem;padding:3px 9px;border-radius:99px;background:var(--wash);border:1px solid var(--line)}
+.nm.miss{background:var(--bad-bg);border-color:#F0C9CD}.nm.late{background:var(--late-bg);border-color:#F1DCB2}.nm.ok{background:var(--ok-bg);border-color:#C8E7D6}
+.li-btn{width:100%;text-align:left;background:var(--paper);border:0;border-top:1px solid var(--line);cursor:pointer;font:inherit;color:inherit}
+.li-btn:first-child{border-top:0}.li-btn:hover{background:var(--wash)}
+.wdays{display:flex;flex-wrap:wrap;gap:6px}
+.wdays label{position:relative;cursor:pointer}
+.wdays input{position:absolute;opacity:0;inset:0}
+.wdays span{display:block;padding:7px 12px;border:1px solid var(--line-2);border-radius:8px;font-weight:700;font-size:.88rem;color:var(--ink-2)}
+.wdays input:checked+span{background:var(--navy);border-color:var(--navy);color:#fff}
+.wdays input:focus-visible+span{outline:3px solid var(--navy-2);outline-offset:2px}
+details.connect>summary{cursor:pointer;font-weight:700;font-size:.88rem;color:var(--navy-2);list-style:none}
+details.connect>summary::-webkit-details-marker{display:none}
+details.connect[open]>summary{margin-bottom:10px}
+.checks{display:flex;flex-direction:column;gap:6px;font-size:.88rem}
+.checks div{display:flex;gap:8px;align-items:flex-start}
+.checks b{flex:none;width:18px}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading"><div class="stack" style="align-items:center;text-align:center;max-width:420px">
+  <div>Loading ACE Attendance…</div>
+  <div id="boot-slow" hidden><p class="hint">This is taking longer than usual. The first time after an update, the app upgrades the Google Sheet, which can take up to a minute.</p>
+    <div class="btns" style="justify-content:center;margin-top:10px"><button class="btn primary" type="button" onclick="location.reload()">Reload</button><button class="btn" type="button" onclick="try{Object.keys(localStorage).filter(function(k){return k.indexOf('ace:token')===0}).forEach(function(k){localStorage.removeItem(k)})}catch(e){};location.reload()">Back to sign in</button></div></div>
+  <div id="boot-err" class="err" hidden></div></div></div></div>
+<script>
+/* Safety net: if the app hasn't started after 12 seconds, offer Reload / Back to sign in; show any script error. */
+setTimeout(function(){ var el=document.getElementById("boot-slow"); if (el) el.hidden=false; }, 12000);
+window.addEventListener("error", function(e){ var el=document.getElementById("boot-err"); if (el){ el.hidden=false; el.textContent="Error: "+(e.message||e); var s=document.getElementById("boot-slow"); if (s) s.hidden=false; } });
+</script>
+<div id="modal" hidden></div>
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   ACE Attendance — Version 1.4 · American Center for Education
+   © 2026 Lin Khant Wai Yan. All rights reserved.
+   Designed and developed by Lin Khant Wai Yan. No part of this app may be copied, modified,
+   redistributed or presented as someone else's work without the developer's written permission.
+   Roles: Student submits · Lecturer approves / edits · Admin manages & exports
+   =========================================================================
+
+   ============ SETTINGS: paste your two values here (like LINX) ============
+   Leave both empty  → DEMO MODE: works right away, data saved in this browser only.
+   Fill both in      → LIVE: everyone shares one Google Sheet database.
+     SHEET_URL = Apps Script web app link (ends with /exec)
+     SHEET_KEY = ACCESS KEY printed in the Apps Script Execution log after running setup
+   If Apps Script serves this page itself (HTML file named "index" in the project),
+   it connects automatically and these can stay empty.                                  */
+const CONFIG = {
+  SHEET_URL: "https://script.google.com/macros/s/AKfycby7IBfwmE_qyrR1hSQe1YToBIRY3ZF8zp747FYhaP0rAh8fmAZwivRhUCC2sJKz2PFCHA/exec",
+  SHEET_KEY: "ACE-4D8E71B29F9A41C492483924"
+};
+/* ========================================================================= */
+
+const APP_VERSION = "1.4.5";
+const TZ = "Asia/Singapore";
+const POLL_MS = 15000;
+
+const $ = (s, el=document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = {
+  get(k){ try { return localStorage.getItem("ace:"+k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem("ace:"+k,v); } catch(e){} },
+  del(k){ try { localStorage.removeItem("ace:"+k); } catch(e){} }
+};
+
+/* ---------- SHA-256 (pure JS, for demo-mode passwords) ---------- */
+function sha256(str){
+  const s=unescape(encodeURIComponent(str)), rr=(v,a)=>(v>>>a)|(v<<(32-a)), K=[], H=[]; let p=0;
+  for (let c=2;p<64;c++){ let pr=true; for (let i=2;i*i<=c;i++) if (c%i===0){pr=false;break;} if (pr){ if (p<8) H[p]=(Math.pow(c,1/2)*4294967296)|0; K[p++]=(Math.pow(c,1/3)*4294967296)|0; } }
+  const b=[]; for (let i=0;i<s.length;i++) b.push(s.charCodeAt(i));
+  const bl=b.length*8; b.push(0x80); while (b.length%64!==56) b.push(0);
+  const hi=Math.floor(bl/4294967296), lo=bl>>>0;
+  b.push((hi>>>24)&255,(hi>>>16)&255,(hi>>>8)&255,hi&255,(lo>>>24)&255,(lo>>>16)&255,(lo>>>8)&255,lo&255);
+  const h=H.slice();
+  for (let j=0;j<b.length;j+=64){
+    const w=new Array(64);
+    for (let i=0;i<16;i++) w[i]=(b[j+i*4]<<24)|(b[j+i*4+1]<<16)|(b[j+i*4+2]<<8)|b[j+i*4+3];
+    for (let i=16;i<64;i++){ const s0=rr(w[i-15],7)^rr(w[i-15],18)^(w[i-15]>>>3), s1=rr(w[i-2],17)^rr(w[i-2],19)^(w[i-2]>>>10); w[i]=(w[i-16]+s0+w[i-7]+s1)|0; }
+    let [a,bb,c,d,e,f,g,hh]=h;
+    for (let i=0;i<64;i++){ const t1=(hh+(rr(e,6)^rr(e,11)^rr(e,25))+((e&f)^(~e&g))+K[i]+w[i])|0, t2=((rr(a,2)^rr(a,13)^rr(a,22))+((a&bb)^(a&c)^(bb&c)))|0; hh=g; g=f; f=e; e=(d+t1)|0; d=c; c=bb; bb=a; a=(t1+t2)|0; }
+    h[0]=(h[0]+a)|0; h[1]=(h[1]+bb)|0; h[2]=(h[2]+c)|0; h[3]=(h[3]+d)|0; h[4]=(h[4]+e)|0; h[5]=(h[5]+f)|0; h[6]=(h[6]+g)|0; h[7]=(h[7]+hh)|0;
+  }
+  return h.map(x=>(x>>>0).toString(16).padStart(8,"0")).join("");
+}
+function rid(n=16){ try { const a=new Uint8Array(n); crypto.getRandomValues(a); return [...a].map(x=>x.toString(16).padStart(2,"0")).join(""); } catch(e){ let s=""; while (s.length<n*2) s+=Math.random().toString(16).slice(2); return s.slice(0,n*2); } }
+
+/* ---------- Singapore time ---------- */
+const partsFmt = new Intl.DateTimeFormat("en-GB",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"});
+function sgt(d=new Date()){
+  const o={}; for (const x of partsFmt.formatToParts(d)) o[x.type]=x.value;
+  const hh=o.hour==="24"?"00":o.hour;
+  return {date:`${o.year}-${o.month}-${o.day}`, month:`${o.year}-${o.month}`, time:`${hh}:${o.minute}:${o.second}`, h:+hh, m:+o.minute, s:+o.second};
+}
+const toSecs = t => { const [h,m,s]=String(t||"0:0:0").split(":").map(Number); return (h||0)*3600+(m||0)*60+(s||0); };
+function fmt12(t, sec=false){ if (!t) return "—"; const [H,M,X]=String(t).split(":").map(Number); return `${((H+11)%12)+1}:${String(M||0).padStart(2,"0")}${sec?":"+String(X||0).padStart(2,"0"):""} ${H>=12?"PM":"AM"}`; }
+function dateLabel(d, opts={weekday:"short",day:"numeric",month:"short",year:"numeric"}){ if (!d) return "—"; const [y,m,dd]=d.split("-").map(Number); return new Date(Date.UTC(y,m-1,dd)).toLocaleDateString("en-GB",{...opts,timeZone:"UTC"}); }
+function monthLabel(mo){ if (!mo) return "—"; const [y,m]=mo.split("-").map(Number); return new Date(Date.UTC(y,m-1,1)).toLocaleDateString("en-GB",{month:"long",year:"numeric",timeZone:"UTC"}); }
+function stampLabel(s){ if (!s) return "—"; const [d,t]=String(s).split(" "); return `${dateLabel(d,{day:"numeric",month:"short"})}, ${fmt12(t)}`; }
+const nowStamp = () => { const t=sgt(); return t.date+" "+t.time; };
+const openAt = () => dayInfoC(sgt().date).open;
+const closeAt = () => dayInfoC(sgt().date).close;
+const untilAt = () => dayInfoC(sgt().date).until;
+function windowState(time){ const t=toSecs(time); if (t < toSecs(openAt()+":00")) return "before"; if (t > toSecs(closeAt()+":00")+59) return "after"; return "open"; }
+function autoMarkFor(time, st){ return toSecs(time) <= toSecs((st.presentUntil||"09:20")+":00")+59 ? "Present" : "Late"; }
+
+/* =========================================================================
+   CONNECTION: three ways to reach the data
+     script → this page is served by Apps Script (google.script.run)
+     remote → index.html hosted anywhere, talks to the /exec link with the access key
+     demo   → no Google Sheet: data kept in this browser (localStorage)
+   ========================================================================= */
+const inAppsScript = () => !!(window.google && google.script && google.script.run);
+function remoteConn(){
+  if (CONFIG.SHEET_URL) return {url:CONFIG.SHEET_URL.trim(), key:(CONFIG.SHEET_KEY||"").trim(), fromConfig:true};
+  const url=store.get("sheetUrl"); return url ? {url, key:store.get("sheetKey")||"", fromConfig:false} : null;
+}
+function mode(){ return inAppsScript() ? "script" : remoteConn() ? "remote" : "demo"; }
+const tokenKey = () => "token:"+mode()+":"+(mode()==="remote"?remoteConn().url:"");
+
+function callScript(action, args){
+  return new Promise((resolve, reject)=>{
+    const t=setTimeout(()=>reject(new Error("The server is taking too long to answer. If you just updated the app, wait a minute and reload. Otherwise open Apps Script > Executions to see the error.")), 90000);
+    google.script.run
+      .withSuccessHandler(v=>{ clearTimeout(t); if (v===null || v===undefined) reject(new Error("The server sent back nothing. Open Apps Script > Executions to see the error, or run setup again.")); else resolve(v); })
+      .withFailureHandler(e=>{ clearTimeout(t); const m=String((e&&e.message)||e); reject(new Error(/authoriz|permission/i.test(m) ? "Google needs permission again. The sheet owner should open Apps Script, run setup, click Allow, then Deploy > Manage deployments > New version. ("+m+")" : m)); })
+      .apiCall(action, args);
+  });
+}
+async function callRemote(action, args){
+  const c=remoteConn();
+  let res;
+  try { res = await fetch(c.url, {method:"POST", body:JSON.stringify({key:c.key, action, args})}); }
+  catch(e){ throw new Error("Can't reach the Google Sheet. Check the internet connection and the web app link."); }
+  let body; try { body = await res.json(); } catch(e){ throw new Error("The web app link didn't answer with data. Check it ends with /exec and the deployment allows Anyone."); }
+  return body;
+}
+async function api(action, ...args){
+  const m=mode();
+  let env;
+  if (m==="demo"){ env = Local.route(action, args); }
+  else if (m==="script"){ env = await callScript(action, args); }
+  else { env = await callRemote(action, args); }
+  if (!env || !env.ok){
+    const msg = (env && env.error) || "Something went wrong.";
+    if (msg.indexOf("SESSION_EXPIRED")>=0){ endSession("Your session ended. Please sign in again."); throw new Error("Your session ended."); }
+    throw new Error(msg);
+  }
+  return env.data;
+}
+
+/* ---------- timetable (same rules as Code.gs) ---------- */
+const DEFAULT_TT = {start:"", end:"", days:[1,2,3,4,5], overrides:{}, blocks:[]};
+const ttNow = () => (S.settings && S.settings.timetable) || DEFAULT_TT;
+const weekdayOf = date => { const wd=new Date(date+"T12:00:00Z").getUTCDay(); return wd===0?7:wd; };
+/** The module period that covers this date (inside its dates, on one of its weekdays). */
+function blockForC(date, tt){ tt=tt||ttNow(); const wd=weekdayOf(date); return (tt.blocks||[]).find(b=>date>=b.startDate && date<=b.endDate && (b.days||[]).includes(wd)) || null; }
+/* Safety rules (same as Code.gs): a day with records always counts; a past day without records never does;
+   only today and the future follow the timetable plan. So the timetable can never hide recorded days. */
+function isClassDayC(date, tt){
+  tt = tt || ttNow();
+  if (tt.recDates && tt.recDates[date]) return true;
+  if (date < (tt.today || sgt().date)) return false;
+  return planClassDayC(date, tt);
+}
+const firstBlockC = tt => (tt.blocks||[]).reduce((m,b)=>!m||b.startDate<m?b.startDate:m, "");
+function planClassDayC(date, tt){
+  tt = tt || ttNow();
+  if (tt.start && date < tt.start) return false;
+  if (tt.end && date > tt.end) return false;
+  if (tt.overrides && tt.overrides[date]==="off") return false;
+  if (tt.overrides && tt.overrides[date]==="on") return true;
+  const first = firstBlockC(tt);
+  if (first && date >= first) return !!blockForC(date, tt);
+  return (tt.days||[]).includes(weekdayOf(date));
+}
+/** Modules taught in a month: timetable entries, plus modules found in that month's records (for months before the timetable). */
+function monthModules(month, tt){
+  tt = tt || ttNow();
+  const out = (tt.blocks||[]).filter(b=>b.startDate.slice(0,7)<=month && b.endDate.slice(0,7)>=month).sort((a,b)=>a.startDate.localeCompare(b.startDate))
+    .map(b=>({name:b.moduleName, code:modCode(b.moduleId,b.moduleName), from:b.startDate, to:b.endDate, days:b.days, time:timeRange(b.classStart,b.classEnd), lecturer:b.lecturerName||""}));
+  const seen = new Set(out.map(x=>x.name.toLowerCase()));
+  const recs = ((typeof S!=="undefined"&&S.records)||[]).filter(r=>r.month===month || String(r.date||"").slice(0,7)===month);
+  const byMod = {};
+  recs.forEach(r=>{ const n=r.moduleName||""; if (!n || seen.has(n.toLowerCase())) return; const k=n.toLowerCase(); const x=byMod[k]||(byMod[k]={name:n, code:modCode(r.moduleId,n), from:r.date, to:r.date, fromRecords:true}); if (r.date<x.from) x.from=r.date; if (r.date>x.to) x.to=r.date; });
+  return out.concat(Object.values(byMod));
+}
+function monthModulesCard(month){
+  const mm = monthModules(month);
+  const fmtD = d => dateLabel(d,{day:"numeric",month:"short"});
+  return `<section class="panel stack"><div class="label">What we teach</div><h2>Modules in ${esc(monthLabel(month))}</h2>
+    ${mm.length?`<div class="list">${mm.map(x=>`<div class="li"><div><b>${esc(x.name)}</b> <span class="tag">${esc(x.code)}</span>
+      <div class="muted" style="font-size:.86rem">${x.fromRecords?`Since ${fmtD(x.from)}`:`${fmtD(x.from)} – ${fmtD(x.to)}`}${x.days?` · ${esc(daysLabel(x.days))}`:""}${x.time?` · ${esc(x.time)}`:""}${x.lecturer?` · ${esc(x.lecturer)}`:""}${x.fromRecords?" · no module dates set for this month":""}</div></div></div>`).join("")}</div>`
+    :`<div class="empty"><b>No module this month</b><span>The admin adds modules in Calendar → Module timetable.</span></div>`}</section>`;
+}
+const hmMin = t => { const [h,m]=String(t||"0:0").split(":").map(Number); return (h||0)*60+(m||0); };
+const minHm = n => { n=Math.max(0,Math.min(1439,Math.round(n))); return String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0"); };
+/** Module, class time and attendance window for a date. The window keeps the same distance from class start as Settings. */
+function dayInfoFor(st, tt, date){
+  st=st||{}; const b=blockForC(date, tt), base=hmMin(st.classStart||"09:00"), cs=b?b.classStart:(st.classStart||"09:00");
+  const sh=(t,def)=>minHm(hmMin(cs)+hmMin(t||def)-base);
+  return {block:b, moduleId:b?b.moduleId:"", moduleName:b?b.moduleName:"", lecturerName:b?(b.lecturerName||""):"", classStart:cs, classEnd:b?b.classEnd:(st.classEnd||"12:00"),
+    open:sh(st.openAt,"08:30"), until:sh(st.presentUntil,"09:20"), close:sh(st.closeAt,"09:30")};
+}
+const dayInfoC = date => { const i=dayInfoFor(S.settings||{}, ttNow(), date); if (!i.moduleName){ const m=defaultModule(); if (m){ i.moduleId=m.id; i.moduleName=m.name; i.lecturerName=m.lecturerName||""; } } return i; };
+/** Days not covered by module dates use the active module (same as the server). */
+const defaultModule = () => ((typeof S!=="undefined"&&S.modules)||[]).find(m=>m.active) || null;
+const modLabelFor = (ds, tt) => { const b=blockForC(ds,tt); if (b) return {code:modCode(b.moduleId,b.moduleName), name:b.moduleName, start:b.classStart}; const m=defaultModule(); return m?{code:m.code||modCode(m.id,m.name), name:m.name, start:(S.settings&&S.settings.classStart)||"09:00"}:null; };
+function modCode(id, name){ const m=(typeof S!=="undefined"&&S.modules||[]).find(x=>x.id===id); if (m&&m.code) return m.code; return String(name||"").split(/[^A-Za-z0-9]+/).filter(w=>w&&!/^(and|of|the|for|in|to)$/i.test(w)).map(w=>w[0]).join("").toUpperCase().slice(0,6); }
+const DAYN = ["","Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const daysLabel = arr => { const a=(arr||[]).slice().sort(); if (a.join()==="1,2,3,4,5") return "Mon–Fri"; if (a.join()==="1,2,3,4,5,6") return "Mon–Sat"; return a.map(n=>DAYN[n]).join(", "); };
+const timeRange = (a,b) => `${fmt12(a+":00")} – ${fmt12(b+":00")}`;
+function addDays(date, n){ const d=new Date(date+"T12:00:00Z"); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); }
+function nextClassDay(from, tt){ for (let i=1;i<=120;i++){ const d=addDays(from,i); if (isClassDayC(d,tt)) return d; } return ""; }
+const msgsOf = r => (r && r.messages) || [];
+
+/* Sign-in protection (same numbers as Code.gs): wrong 5x → wait 1 min, then 3, 5, 10, 10. 10 wrong → locked until reset. */
+const LOCK_AFTER = 5, LOCK_MINUTES = [1,3,5,10,10], MAX_WRONG = 10;
+
+/* Class list used by demo mode (the live Google Sheet has its own copy in Code.gs). */
+const ROSTER = [
+  ["KACHHIYA PATEL HET MUKESHBHAI","M0582215N"],["SUNTHARALINKAM PAVAJANAN","M0573093N"],["JANGUGE BAVINDU SANCHITHA MADUKALANA","M0390363R"],
+  ["REHAN","M0584477T"],["PITAGALDENIYA MUDIYANSELAGE GIMSARA NISAL MENUKA BANDARA","M0445286T"],["MALIK PARAS","M0365823J"],
+  ["LIN KHANT WAI YAN","G3747353M"],["PALIHAPITIYA GAMAGE NIRMAL RANDUNU","M0520422K"],["BOBAN ASHLY","M0584448N"],
+  ["KUMAWAT OMPRAKASH","M0427134X"],["RITU","M0279994K"],["SINGH KARAMVEER","M0409170U"],["MOHAMMED AKHRAM AHMED","M0428168X"],
+  ["JUSUNI TULSIBEN GHUNSHYUMBHUI","M0246844U"],["KUMAR SUMIT","M0636274L"],["AMARASINGHE ACHARILAGE UDANI SUPUN VANDANA AMARASINGHE","M0447949U"],
+  ["JAYASINGHE JAYASINGHEGE SULOCHANA SEWWANDI","M0422883Q"],["SIYAMBALAPITIGAMA MUDIYANSELAGE SANIDU NETHSARA","M0449133L"],
+  ["SINGH SEHAJNOOR","M0661799Q"],["VARUN KUMAR","M0020369J"]
+];
+
+/* =========================================================================
+   DEMO BACKEND — same rules as Code.gs, data in this browser only
+   ========================================================================= */
+const Local = (() => {
+  const KEY = "ace:demo-db:v5";
+  let mem = null;
+  function seed(){
+    const acc=(u,n,r,pw)=>{ const salt=rid(); return {key:u.toLowerCase(), username:u, displayName:n, role:r, studentId:"", active:"TRUE", passHash:sha256(salt+"|"+pw), salt, createdAt:nowStamp(), lastLoginAt:""}; };
+    return { version:String(Date.now()),
+      settings:{schoolName:"American Center for Education", classStart:"09:00", presentUntil:"09:20", adminCanApprove:"FALSE", adminPermissionBy:"", adminPermissionAt:"", formUrl:"", openAt:"08:30", closeAt:"09:30", classEnd:"12:00", timetable:{start:"", end:"", days:[1,2,3,4,5], overrides:{}, blocks:[]}},
+      leave:[], autoLast:"",
+      accounts:[acc("Ravidran","Mr. Ravidran","Lecturer","Ravidran"), acc("Nicolas","Mr. Nicolas","Admin","Nicolas"),
+        ...ROSTER.map(([n,id])=>Object.assign(acc(id,n,"Student",id),{studentId:id}))],
+      requests:[],
+      modules:[{id:"ipsc", code:"IPSC", name:"Information Privacy, Security and Continuity", lecturerKey:"ravidran", active:"TRUE", createdAt:nowStamp()}],
+      records:[], audit:[], sessions:{}, fails:{} };
+  }
+  function db(){
+    if (!mem){ try { mem = JSON.parse(localStorage.getItem(KEY)||"null"); } catch(e){ mem=null; } }
+    if (!mem){ mem = seed(); save(); }
+    mem.requests = mem.requests || []; mem.leave = mem.leave || [];
+    return mem;
+  }
+  function save(){ mem.version=String(Date.now()); try { localStorage.setItem(KEY, JSON.stringify(mem)); } catch(e){} }
+  function reload(){ mem = null; }
+  const err = m => { throw new Error(m); };
+  const keyOf = u => String(u||"").trim().toLowerCase();
+  const validKey = k => /^[a-z0-9][a-z0-9_-]{2,39}$/.test(k);
+  const findAcc = k => db().accounts.find(a=>a.key===k) || null;
+  const canApprove = (a) => a.role==="Lecturer" || (a.role==="Admin" && db().settings.adminCanApprove==="TRUE");
+  const hist = (a, action, detail) => ({at:nowStamp(), by:a.key, byName:a.displayName, role:a.role, action, detail:detail||""});
+  function audit(a, action, target, detail){ db().audit.push({at:nowStamp(), by:a?a.key:"system", role:a?a.role:"System", action, target:target||"", detail:detail||""}); if (db().audit.length>500) db().audit.splice(0, db().audit.length-500); }
+  function auth(token, roles){
+    const s = db().sessions[token]; if (!s || s.exp < Date.now()) err("SESSION_EXPIRED");
+    const a = findAcc(s.key); if (!a || a.active!=="TRUE") err("SESSION_EXPIRED");
+    s.exp = Date.now()+6*3600e3;
+    if (roles && !roles.includes(a.role)) err("You don't have permission to do that.");
+    return a;
+  }
+  const pubMe = a => ({key:a.key, username:a.username, displayName:a.displayName, role:a.role, studentId:a.studentId});
+  const pubAcc = a => { const fc=+(a.failCount||0), u=+(a.lockedUntil||0); return {key:a.key, username:a.username, displayName:a.displayName, role:a.role, studentId:a.studentId, active:a.active==="TRUE", lastLoginAt:a.lastLoginAt, failCount:fc, blocked:fc>=MAX_WRONG, waitSec:u>Date.now()?Math.ceil((u-Date.now())/1000):0}; };
+  function closeReq(key, by){ db().requests.forEach(r=>{ if (r.userKey===key && r.status==="Open"){ r.status="Done"; r.handledBy=by; r.handledAt=nowStamp(); } }); }
+  const pubSettings = st => ({schoolName:st.schoolName, classStart:st.classStart, presentUntil:st.presentUntil, timezone:TZ, adminCanApprove:st.adminCanApprove==="TRUE", adminPermissionBy:st.adminPermissionBy, adminPermissionAt:st.adminPermissionAt, formUrl:st.formUrl||"", appUrl:"", appVersion:APP_VERSION, schemaVersion:4, timetable:Object.assign(ttL(),{blocks:((st.timetable||{}).blocks||[]).map(b=>Object.assign({},b,{lecturerName:(findAcc(b.lecturerKey)||{}).displayName||""}))}), openAt:st.openAt||"08:30", closeAt:st.closeAt||"09:30", classEnd:st.classEnd||"12:00"});
+  const ttL = () => { const rd={}; db().records.forEach(r=>{ rd[r.date]=true; }); return Object.assign({}, db().settings.timetable||DEFAULT_TT, {recDates:rd, today:sgt().date}); };
+  const dinfo = date => dayInfoFor(db().settings, db().settings.timetable, date);
+  const modFor = date => { const i=dinfo(date); return (i.moduleId && db().modules.find(m=>m.id===i.moduleId)) || db().modules.find(m=>m.active==="TRUE"); };
+  const pubLeave = L => ({id:L.id, at:L.at, studentKey:L.studentKey, name:L.name, fromDate:L.fromDate, toDate:L.toDate, message:L.message, hasFile:!!L.data, fileName:L.fileName, mime:L.mime, status:L.status, reviewedBy:L.reviewedBy, reviewedAt:L.reviewedAt, reply:L.reply});
+  function newRec(stu, mod, d, mark, source, by){ return {id:[d, stu.key, mod.id].join("_"), date:d, day:dateLabel(d,{weekday:"long"}), month:d.slice(0,7), studentKey:stu.key, studentName:stu.displayName, studentId:stu.studentId,
+    moduleId:mod.id, moduleName:mod.name, submittedAt:"", submittedTime:"", autoMark:mark, mark, status:"Approved", studentNote:"", selectedMonth:monthLabel(d.slice(0,7)).split(" ")[0], lecturerNote:"",
+    reviewedBy:by, reviewedAt:nowStamp(), source, updatedAt:nowStamp(), history:[{at:nowStamp(), by:"system", byName:by, role:"System", action:source==="Auto"?"auto_absent":"excused", detail:source==="Auto"?"No submission by "+fmt12(dinfo(d).close+":00"):"MC accepted"}], schemaVersion:"5", messages:[]}; }
+  function autoAbsent(){
+    const d0=db(), t=sgt(), closed=!isClassDayC(t.date,ttL()) || toSecs(t.time) > toSecs(dinfo(t.date).close+":00")+59, target=closed?t.date:addDays(t.date,-1);
+    if (!d0.autoLast){ d0.autoLast=addDays(t.date,-1); save(); }
+    if (target<=d0.autoLast) return;
+    const studs=d0.accounts.filter(a=>a.role==="Student"&&a.active==="TRUE");
+    const tl=ttL();
+    for (let d=addDays(d0.autoLast,1), g=0; d<=target && g<62; d=addDays(d,1), g++){
+      const mod=(tl.recDates[d]||planClassDayC(d, tl))?modFor(d):null;
+      if (!mod) continue;
+      studs.forEach(a=>{ if (!d0.records.some(r=>r.date===d&&r.studentKey===a.key)) d0.records.push(newRec(a,mod,d,"Absent","Auto","System")); });
+    }
+    d0.autoLast=target; save();
+  }
+  /** Demo copy of Code.gs registerData_/registerCsv_: one row per student, P/L/A per class day. */
+  function registerCsvLocal(month){
+    const d0=db(), st=d0.settings, tt=ttL(), today=sgt().date, recs=d0.records.filter(r=>r.month===month);
+    const [y,m]=month.split("-").map(Number), dim=new Date(Date.UTC(y,m,0)).getUTCDate(), set=new Set();
+    for (let i=1;i<=dim;i++){ const ds=`${month}-${String(i).padStart(2,"0")}`; if (isClassDayC(ds,tt)) set.add(ds); }
+    recs.forEach(r=>set.add(r.date));
+    const dates=[...set].sort(), held=new Set(recs.map(r=>r.date)), counted=dates.filter(x=>x<today||(x===today&&held.has(x)));
+    const cellOf={}; recs.forEach(r=>{ cellOf[r.studentKey+"|"+r.date]=r; });
+    const has=new Set(recs.map(r=>r.studentKey)), roster=d0.accounts.filter(a=>a.role==="Student"&&(a.active==="TRUE"||has.has(a.key)));
+    const stat=r=>r.status==="Pending"?"Pending":r.status==="Declined"?"Declined":r.mark;
+    const CODE={Present:"P",Late:"L",Absent:"A",Excused:"E",Pending:"?",Declined:"X"}, mask=id=>{ id=String(id||""); return id.length>4?"****"+id.slice(-4):id; };
+    const dlab=x=>{ const dt=new Date(x+"T12:00:00Z"); return dt.getUTCDate()+"-"+dt.toLocaleString("en-GB",{month:"short",timeZone:"UTC"}); };
+    const head=["No","Student Name","ID",...dates.map(dlab),"P","L","A","E","Attendance"];
+    const rows=roster.map((a,i)=>{ const row=[String(i+1),a.displayName,mask(a.studentId||a.username)]; const c={Present:0,Late:0,Absent:0,Excused:0,Pending:0,Declined:0,days:0};
+      dates.forEach(x=>{ const r=cellOf[a.key+"|"+x]; if (r){ const k=stat(r); row.push(CODE[k]||""); } else if (counted.includes(x)&&x<today) row.push("–"); else row.push(""); });
+      counted.forEach(x=>{ const r=cellOf[a.key+"|"+x]; if (!r&&x===today) return; c.days++; if (r){ const k=stat(r); c[k]=(c[k]||0)+1; } });
+      const dec=c.days-c.Pending-c.Excused, pct=dec>0?Math.round((c.Present+c.Late)/dec*100):null;
+      return row.concat([String(c.Present),String(c.Late),String(c.Absent),String(c.Excused),pct===null?"":pct+"%"]); });
+    const mods=[...new Set(recs.map(r=>r.moduleName))].join(", ")||((d0.modules.find(x=>x.active==="TRUE")||{}).name||"");
+    const q=v=>{ let x=String(v==null?"":v); if (/^[=+\-@]/.test(x)) x="'"+x; return /[",\r\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x; };
+    const top=[[st.schoolName+" · Attendance Register"],["Module",mods],["Lecturer","Mr. Ravidran"],["Month",monthLabel(month)],["Class time",`${fmt12(st.classStart+":00")} · Present until ${fmt12(st.presentUntil+":00")} · Submit ${fmt12((st.openAt||"08:30")+":00")}–${fmt12((st.closeAt||"09:30")+":00")}`],
+      ["Key","P = Present · L = Late · A = Absent · E = Excused (MC) · ? = Pending · X = Declined · – = Not submitted"],[""]];
+    const lines=top.concat([head],rows,[[""],["© 2026 Lin Khant Wai Yan. All rights reserved."]]).map(r=>r.map(q).join(","));
+    return {csv:"\uFEFF"+lines.join("\r\n"), students:rows.length, days:dates.length};
+  }
+  const mmsg = (a, text) => ({at:nowStamp(), by:a.key, name:a.displayName, role:a.role, text:String(text||"").slice(0,500)});
+  const A = {
+    apiPing(){ return {live:true, build:"demo", serverTime:nowStamp()+" SGT", problems:[]}; },
+    apiLogin(username, password){
+      const k=keyOf(username); if (!k) return {status:"wrong"};
+      const a=findAcc(k), now=Date.now();
+      const holder = a || (db().fails[k] = db().fails[k] || {});
+      const fc=+(holder.failCount||0), until=+(holder.lockedUntil||0);
+      if (fc>=MAX_WRONG) return {status:"blocked"};
+      if (until>now) return {status:"locked", wait:Math.ceil((until-now)/1000), left:MAX_WRONG-fc};
+      if (!a || a.passHash!==sha256(a.salt+"|"+String(password||""))){
+        const n=fc+1, nu = n>=LOCK_AFTER && n<MAX_WRONG ? now+LOCK_MINUTES[Math.min(n-LOCK_AFTER, LOCK_MINUTES.length-1)]*60000 : 0;
+        holder.failCount=String(n); holder.lockedUntil=nu?String(nu):"";
+        if (a && n>=LOCK_AFTER) audit(a, n>=MAX_WRONG?"account_locked":"sign_in_wait", a.key, n+" wrong passwords");
+        save();
+        if (n>=MAX_WRONG) return {status:"blocked"};
+        if (nu) return {status:"locked", wait:Math.ceil((nu-now)/1000), left:MAX_WRONG-n};
+        return {status:"wrong", left:MAX_WRONG-n, beforeWait:LOCK_AFTER-n};
+      }
+      if (a.active!=="TRUE") err("This account is deactivated. Contact the admin.");
+      a.failCount=""; a.lockedUntil="";
+      const token=rid(24); db().sessions[token]={key:k, exp:Date.now()+6*3600e3};
+      a.lastLoginAt=nowStamp(); audit(a,"sign_in",k); save();
+      return {status:"ok", token, me:pubMe(a)};
+    },
+    apiRequestReset(username, message){
+      const k=keyOf(username); if (!k) err("Enter your username (Student ID).");
+      const a=findAcc(k); if (!a) return {sent:true};
+      const open=db().requests.find(r=>r.userKey===k && r.status==="Open");
+      if (open){ open.at=nowStamp(); open.message=String(message||"").slice(0,300); }
+      else db().requests.push({id:"R"+Date.now(), at:nowStamp(), userKey:k, username:a.username, name:a.displayName, message:String(message||"").slice(0,300), status:"Open", handledBy:"", handledAt:""});
+      audit(a,"password_help_requested",k,String(message||"").slice(0,80)); save(); return {sent:true};
+    },
+    apiResetPassword(token, key, newPassword){
+      const me=auth(token,["Lecturer","Admin"]), a=findAcc(keyOf(key)); if (!a) err("Account not found.");
+      if (me.role==="Lecturer" && a.role!=="Student") err("Lecturers can reset student passwords only.");
+      const pw=String(newPassword||"")||a.username; if (pw.length<6) err("Password needs at least 6 characters. Type a new password instead of using the default.");
+      a.salt=rid(); a.passHash=sha256(a.salt+"|"+pw); a.failCount=""; a.lockedUntil=""; closeReq(a.key, me.displayName);
+      audit(me,"password_reset",a.key,newPassword?"New password set":"Reset to default (Student ID)"); save();
+      return {usedDefault:!newPassword, username:a.username};
+    },
+    apiDismissRequest(token, id){
+      const me=auth(token,["Lecturer","Admin"]), r=db().requests.find(x=>x.id===id);
+      if (r && r.status==="Open"){ r.status="Dismissed"; r.handledBy=me.displayName; r.handledAt=nowStamp(); save(); }
+      return true;
+    },
+    apiImportStudents(token, text){
+      const me=auth(token,["Admin"]); let added=0; const skipped=[], errors=[];
+      String(text||"").split(/\r?\n/).forEach(line=>{
+        if (!line.trim()) return; const c=line.split(/\t|,/).map(x=>x.trim());
+        if (/name/i.test(c[0]) && /user|id/i.test(c[1]||"")) return;
+        const name=c[0].replace(/[`´]/g,"").replace(/\s+/g," ").trim(), id=c[1]||"", k=keyOf(id), pw=c[2]||id;
+        if (!name||!id) return; if (!validKey(k)){ errors.push(id+": ID must be 3–40 letters or numbers"); return; }
+        if (pw.length<6){ errors.push(id+": password needs at least 6 characters"); return; }
+        if (findAcc(k)){ skipped.push(id); return; }
+        const salt=rid(); db().accounts.push({key:k, username:id, displayName:name, role:"Student", studentId:id, active:"TRUE", passHash:sha256(salt+"|"+pw), salt, createdAt:nowStamp(), lastLoginAt:""}); added++;
+      });
+      if (!added && !skipped.length && !errors.length) err("Paste at least one row: Name, Student ID.");
+      if (added) audit(me,"students_imported","Accounts",added+" added"); save();
+      return {added, skipped, errors};
+    },
+    apiLogout(token){ delete db().sessions[token]; save(); return true; },
+    apiState(token, known){
+      const me=auth(token); const d=db();
+      if (known && known===d.version) return {version:d.version, unchanged:true};
+      let recs=d.records.map(r=>({...r}));
+      if (me.role==="Student") recs=recs.filter(r=>r.studentKey===me.key);
+      const out={version:d.version, me:pubMe(me), settings:pubSettings(d.settings), modules:d.modules.map(m=>({id:m.id, code:m.code, name:m.name, lecturerKey:m.lecturerKey, lecturerName:(findAcc(m.lecturerKey)||{}).displayName||"", active:m.active==="TRUE"})), records:recs};
+      out.leave=(me.role==="Student"?d.leave.filter(x=>x.studentKey===me.key):d.leave).slice(-150).reverse().map(pubLeave);
+      if (me.role!=="Student"){ out.accounts=d.accounts.map(pubAcc); out.requests=d.requests.slice(-100).reverse(); }
+      if (me.role==="Admin") { out.audit=d.audit.slice(-150).reverse(); out.sheetUrl=""; }
+      return out;
+    },
+    apiSubmit(token, moduleId, note){
+      const me=auth(token,["Student"]), d=db(), t=sgt();
+      if (!isClassDayC(t.date, ttL())) err("There is no class today, so attendance is closed. Check the timetable with your lecturer.");
+      const info=dinfo(t.date), mod=info.moduleId ? d.modules.find(m=>m.id===info.moduleId) : d.modules.find(m=>m.id===moduleId && m.active==="TRUE");
+      if (!mod) err("That module is not open for attendance.");
+      const id=[t.date, me.key, mod.id].join("_");
+      if (toSecs(t.time) < toSecs(info.open+":00")) err(`Attendance opens at ${fmt12(info.open+":00")}.`);
+      if (toSecs(t.time) > toSecs(info.close+":00")+59) err(`Attendance closed at ${fmt12(info.close+":00")} and you are marked Absent. If you have a reason, message your lecturer or upload your MC.`);
+      const ex=d.records.find(r=>r.id===id); if (ex) err(ex.mark==="Excused"?"You are on approved leave (MC) today.":"You already submitted attendance for this module today.");
+      const mark=autoMarkFor(t.time, {presentUntil:info.until});
+      const rec={id, date:t.date, day:dateLabel(t.date,{weekday:"long"}), month:t.month, studentKey:me.key, studentName:me.displayName, studentId:me.studentId,
+        moduleId:mod.id, moduleName:mod.name, submittedAt:t.date+" "+t.time, submittedTime:t.time, autoMark:mark, mark, status:"Pending",
+        studentNote:String(note||"").slice(0,500), selectedMonth:monthLabel(t.month).split(" ")[0], lecturerNote:"", reviewedBy:"", reviewedAt:"", source:"App", updatedAt:nowStamp(),
+        history:[hist(me,"submitted",`Auto mark ${mark} at ${t.time} via App`)], schemaVersion:"3", messages:String(note||"").trim()?[mmsg(me,note)]:[]};
+      d.records.push(rec); audit(me,"submit",id,`${mod.name} · ${mark} · App`); save();
+      return {...rec};
+    },
+    apiReview(token, id, decision, mark, note){
+      const me=auth(token,["Lecturer","Admin"]); if (!canApprove(me)) err("Approval needs permission from the lecturer.");
+      if (!["Approved","Declined"].includes(decision)) err("Unknown decision.");
+      if (!["Present","Late"].includes(mark)) mark="Present";
+      const r=db().records.find(x=>x.id===id); if (!r) err("That record no longer exists.");
+      if (r.status!=="Pending") err(`Already ${r.status.toLowerCase()} by ${r.reviewedBy||"someone"}. The list will refresh.`);
+      r.status=decision; if (decision==="Approved") r.mark=mark; r.lecturerNote=String(note||"").slice(0,300);
+      if (r.lecturerNote){ r.messages=r.messages||[]; r.messages.push(mmsg(me,r.lecturerNote)); }
+      r.reviewedBy=me.displayName; r.reviewedAt=nowStamp(); r.updatedAt=nowStamp(); r.history.push(hist(me, decision.toLowerCase(), decision==="Approved"?"Marked "+mark:"Declined"));
+      audit(me, decision.toLowerCase(), id, `${r.studentName} · ${r.mark}`); save(); return true;
+    },
+    apiEditRecord(token, id, status, mark, note){
+      const me=auth(token,["Lecturer","Admin"]); if (!canApprove(me)) err("Editing needs permission from the lecturer.");
+      if (!["Pending","Approved","Declined"].includes(status)) err("Unknown status.");
+      if (!["Present","Late","Absent","Excused"].includes(mark)) err("Unknown mark.");
+      const r=db().records.find(x=>x.id===id); if (!r) err("That record no longer exists.");
+      note=String(note||"").slice(0,300); const ch=[];
+      if (status!==r.status) ch.push(`status ${r.status} → ${status}`); if (mark!==r.mark) ch.push(`mark ${r.mark} → ${mark}`); if (note!==r.lecturerNote) ch.push("note updated");
+      if (!ch.length) return true;
+      if (note && note!==r.lecturerNote){ r.messages=r.messages||[]; r.messages.push(mmsg(me,note)); }
+      r.status=status; r.mark=mark; r.lecturerNote=note; r.updatedAt=nowStamp(); r.history.push(hist(me,"edited",ch.join("; ")));
+      if (status!=="Pending"){ r.reviewedBy=me.displayName; r.reviewedAt=nowStamp(); }
+      audit(me,"edit",id,ch.join("; ")); save(); return true;
+    },
+    apiAddRecord(token, sk, mid, date, time, mark, note){
+      const me=auth(token,["Lecturer","Admin"]); if (!canApprove(me)) err("Adding records needs permission from the lecturer.");
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) err("Pick a date."); if (!/^\d{2}:\d{2}$/.test(time)) err("Pick a time.");
+      if (!["Present","Late","Absent","Excused"].includes(mark)) err("Unknown mark.");
+      const stu=findAcc(sk), mod=db().modules.find(m=>m.id===mid);
+      if (!stu || stu.role!=="Student") err("Student not found."); if (!mod) err("Module not found.");
+      if (date>=sgt().date && !isClassDayC(date, ttL())) err("That date is not a class day in the timetable. Ask the admin to add it in Calendar first.");
+      const id=[date, stu.key, mod.id].join("_"); if (db().records.some(r=>r.id===id)) err("A record for this student, module and date already exists. Edit that one instead.");
+      const t=time+":00";
+      db().records.push({id, date, day:dateLabel(date,{weekday:"long"}), month:date.slice(0,7), studentKey:stu.key, studentName:stu.displayName, studentId:stu.studentId,
+        moduleId:mod.id, moduleName:mod.name, submittedAt:date+" "+t, submittedTime:t, autoMark:autoMarkFor(t, db().settings), mark, status:"Approved",
+        studentNote:"", selectedMonth:monthLabel(date.slice(0,7)).split(" ")[0], lecturerNote:String(note||"").slice(0,300), reviewedBy:me.displayName, reviewedAt:nowStamp(),
+        source:"Manual", updatedAt:nowStamp(), history:[hist(me,"added","Manual record, "+mark)], schemaVersion:"3", messages:[]});
+      audit(me,"add_record",id,`${stu.displayName} · ${mark}`); save(); return true;
+    },
+    apiAddMessage(token, id, text){
+      const me=auth(token); text=String(text||"").trim(); if (!text) err("Write a message first.");
+      const r=db().records.find(x=>x.id===id); if (!r) err("That record no longer exists.");
+      if (me.role==="Student" && r.studentKey!==me.key) err("You can only message about your own attendance.");
+      r.messages=r.messages||[]; if (r.messages.length>=40) err("This conversation is full. Talk in person.");
+      r.messages.push(mmsg(me,text)); r.updatedAt=nowStamp(); audit(me,"message",id,text.slice(0,80)); save(); return true;
+    },
+    apiSaveTimetable(token, t){
+      const me=auth(token,["Admin"]); t=t||{};
+      const ok=d=>d===""||/^\d{4}-\d{2}-\d{2}$/.test(d), start=String(t.startDate||""), end=String(t.endDate||"");
+      if (!ok(start)||!ok(end)) err("Pick valid dates."); if (start&&end&&end<start) err("The end date must be after the start date.");
+      const days=(t.classDays||[]).map(Number).filter(n=>n>=1&&n<=7); if (!days.length) err("Choose at least one class weekday.");
+      const ov={}; Object.keys(t.dayOverrides||{}).forEach(d=>{ if (/^\d{4}-\d{2}-\d{2}$/.test(d) && ["on","off"].includes(t.dayOverrides[d])) ov[d]=t.dayOverrides[d]; });
+      const cur=ttL(), today=cur.today, hasRecs=Object.keys(cur.recDates).length>0;
+      if (hasRecs && start && start>today && start!==cur.start) err("The app is already running, so the start date can't move into the future (it would stop classes from today). To plan next month, use Module timetable → Add module dates.");
+      if (end && end<today && end!==cur.end) err("The end date can't be in the past.");
+      Object.keys(ov).forEach(d=>{ if (d<today && ov[d]!==(cur.overrides||{})[d]) err("Past days can't be changed. They always show what was really recorded.");
+        if (ov[d]==="off" && cur.recDates[d] && ov[d]!==(cur.overrides||{})[d]) err(d+" already has attendance records, so it stays a class day."); });
+      db().settings.timetable={start, end, days:days.sort(), overrides:ov, blocks:(db().settings.timetable||{}).blocks||[]};
+      audit(me,"timetable","Settings",`Start ${start||"—"}, end ${end||"—"}, days ${days.join(",")}`); save(); return true;
+    },
+    apiSaveBlock(token, b){
+      const me=auth(token,["Admin"]); b=Object.assign({},b||{}); const name=String(b.moduleName||"").replace(/\s+/g," ").trim();
+      if (name.length<3) err("Type the module name.");
+      const ok=v=>/^\d{4}-\d{2}-\d{2}$/.test(String(v||"")); if (!ok(b.startDate)||!ok(b.endDate)) err("Pick the start and end dates.");
+      if (b.endDate<b.startDate) err("The end date must be on or after the start date.");
+      const days=(b.days||[]).map(Number).filter(n=>n>=1&&n<=7).sort(); if (!days.length) err("Choose at least one class weekday.");
+      if (!/^\d{2}:\d{2}$/.test(b.classStart||"")||!/^\d{2}:\d{2}$/.test(b.classEnd||"")) err("Enter the class start and end times.");
+      if (hmMin(b.classEnd)<=hmMin(b.classStart)) err("The class must end after it starts.");
+      const tt=db().settings.timetable; tt.blocks=tt.blocks||[];
+      const today=sgt().date, yesterday=addDays(today,-1), row=b.id?tt.blocks.find(x=>x.id===b.id):null;
+      if (b.id && !row) err("That timetable entry was removed by someone else. Reload and try again.");
+      const started=!!row && row.startDate<today;
+      if (started){ if (row.endDate<today) err("This module has already finished. Past timetable entries are kept as history and can't be changed.");
+        b.startDate=row.startDate; if (b.endDate<yesterday) err("The last day can't be before yesterday for a module that is running."); }
+      let mod=db().modules.find(m=>m.name.toLowerCase()===name.toLowerCase());
+      if (!mod){ const code=modCode("",name)||"MOD"; let id=code.toLowerCase(), n=2; if (id.length<3) id=(id+"mod").slice(0,3); while (db().modules.some(m=>m.id===id)) id=code.toLowerCase().slice(0,6)+(n++);
+        mod={id, code, name, lecturerKey:b.lecturerKey||"", active:"TRUE", createdAt:nowStamp()}; db().modules.push(mod); }
+      else { mod.active="TRUE"; if (b.lecturerKey) mod.lecturerKey=b.lecturerKey; }
+      const core=started && (mod.id!==row.moduleId || days.join()!==row.days.slice().sort().join() || b.classStart!==row.classStart || b.classEnd!==row.classEnd);
+      const from=core?today:b.startDate; if (b.endDate<from) err("The last day must be today or later.");
+      const clash=tt.blocks.find(x=>(!row||x.id!==row.id) && !(x.endDate<from||x.startDate>b.endDate) && days.some(d=>x.days.includes(d)));
+      if (clash) err(`These dates overlap with ${clash.moduleName} (${clash.startDate} to ${clash.endDate}). Change the dates or edit that module instead.`);
+      const o={id:(row&&!core)?row.id:("B"+Date.now()+rid(2)), moduleId:mod.id, moduleName:mod.name, lecturerKey:b.lecturerKey||mod.lecturerKey||"", startDate:from, endDate:b.endDate, days, classStart:b.classStart, classEnd:b.classEnd, note:String(b.note||"").slice(0,200)};
+      if (core){ row.endDate=yesterday; tt.blocks.push(o); }
+      else { const i=tt.blocks.findIndex(x=>x.id===o.id); if (i>=0) tt.blocks[i]=o; else tt.blocks.push(o); }
+      audit(me,row?"timetable_edit":"timetable_add",o.id,core?`${row.moduleName} kept until ${yesterday}; from ${from}: ${mod.name}`:`${mod.name} · ${from} to ${b.endDate}`); save();
+      return {id:o.id, moduleId:mod.id, split:core, from};
+    },
+    apiDeleteBlock(token, id){
+      const me=auth(token,["Admin"]), tt=db().settings.timetable; tt.blocks=tt.blocks||[];
+      const row=tt.blocks.find(x=>x.id===id); if (!row) return {removed:true};
+      const today=sgt().date; if (row.endDate<today) err("This module has already finished. It stays in the timetable as history.");
+      if (row.startDate<today){ row.endDate=addDays(today,-1); audit(me,"timetable_end",id,`${row.moduleName} ended on ${row.endDate} (past days kept)`); save(); return {ended:row.endDate}; }
+      tt.blocks=tt.blocks.filter(x=>x.id!==id); audit(me,"timetable_delete",id,row.moduleName); save(); return {removed:true};
+    },
+    apiSubmitLeave(token, p){
+      const me=auth(token,["Student"]); p=p||{}; const from=String(p.fromDate||""), to=String(p.toDate||from), today=sgt().date;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(from)||!/^\d{4}-\d{2}-\d{2}$/.test(to)) err("Pick the date(s) of your absence.");
+      if (to<from) err("The end date must be on or after the start date.");
+      if (from<addDays(today,-30)||to>addDays(today,60)) err("Dates must be within the last 30 days or the next 60 days.");
+      const msg=String(p.message||"").trim().slice(0,500); if (!msg && !p.data) err("Add a message or attach your MC.");
+      if (p.data && !/^image\/(jpeg|png|webp|heic|heif)$|^application\/pdf$/.test(p.mime||"")) err("Attach a photo (JPG or PNG) or a PDF.");
+      if (p.data && p.data.length>2.8e6) err("In demo mode the file must be under 2 MB.");
+      const id="L"+Date.now()+rid(2);
+      db().leave.push({id, at:nowStamp(), studentKey:me.key, name:me.displayName, fromDate:from, toDate:to, message:msg, data:p.data||"", mime:p.mime||"", fileName:p.data?(me.studentId+"_"+from+(p.mime==="application/pdf"?".pdf":".jpg")):"", status:"Pending", reviewedBy:"", reviewedAt:"", reply:""});
+      audit(me,"mc_submitted",id,from+(to!==from?" to "+to:"")); try { save(); } catch(e){ db().leave.pop(); err("Not enough space in this browser for the file."); }
+      return {id};
+    },
+    apiLeaveFile(token, id){
+      const me=auth(token), L=db().leave.find(x=>x.id===id); if (!L||!L.data) err("No file attached.");
+      if (me.role==="Student" && L.studentKey!==me.key) err("You don't have permission to do that.");
+      return {name:L.fileName, mime:L.mime, data:L.data};
+    },
+    apiReviewLeave(token, id, decision, reply){
+      const me=auth(token,["Lecturer","Admin"]); if (!canApprove(me)) err("Reviewing MCs needs permission from the lecturer.");
+      if (!["Accepted","Rejected"].includes(decision)) err("Unknown decision.");
+      const L=db().leave.find(x=>x.id===id); if (!L) err("That request no longer exists.");
+      L.status=decision; L.reviewedBy=me.displayName; L.reviewedAt=nowStamp(); L.reply=String(reply||"").slice(0,300);
+      let changed=0;
+      if (decision==="Accepted"){
+        const tt=ttL(), stu=findAcc(L.studentKey);
+        for (let d=L.fromDate, g=0; d<=L.toDate && g<92; d=addDays(d,1), g++){
+          if (!isClassDayC(d,tt)) continue;
+          const mod=modFor(d);
+          const mine=db().records.filter(r=>r.date===d&&r.studentKey===L.studentKey);
+          if (mine.length) mine.forEach(r=>{ r.status="Approved"; r.mark="Excused"; r.reviewedBy=me.displayName; r.reviewedAt=nowStamp(); r.history.push(hist(me,"excused","MC accepted")); changed++; });
+          else if (stu && mod){ db().records.push(newRec(stu,mod,d,"Excused","Leave",me.displayName)); changed++; }
+        }
+      }
+      audit(me,"mc_"+decision.toLowerCase(),id,L.name); save(); return {changed};
+    },
+    apiDeleteRecord(token, id){
+      const me=auth(token,["Admin"]), d=db(), i=d.records.findIndex(r=>r.id===id);
+      if (i>=0){ const r=d.records[i]; d.records.splice(i,1); audit(me,"delete",id,`${r.studentName} · ${r.date}`); save(); }
+      return true;
+    },
+    apiSetAdminPermission(token, on){
+      const me=auth(token,["Lecturer"]), st=db().settings;
+      st.adminCanApprove=on?"TRUE":"FALSE"; st.adminPermissionBy=on?me.displayName:""; st.adminPermissionAt=on?nowStamp():"";
+      audit(me, on?"permission_grant":"permission_revoke","admin", on?"Admin may approve":"Admin may not approve"); save(); return true;
+    },
+    apiSaveSettings(token, s){
+      const me=auth(token,["Admin"]), school=String(s.schoolName||"").trim();
+      if (!school) err("Enter the school name.");
+      if (!/^\d{2}:\d{2}$/.test(s.classStart) || !/^\d{2}:\d{2}$/.test(s.presentUntil)) err("Enter both times.");
+      if (toSecs(s.presentUntil) < toSecs(s.classStart)) err('"Present until" must be the same as or after the class start.');
+      const form=String(s.formUrl||"").trim(); if (form && !/^https:\/\//i.test(form)) err("The Google Form link must start with https://");
+      const open=s.openAt||"08:30", close=s.closeAt||"09:30";
+      if (toSecs(close)<=toSecs(open)) err("Attendance must close after it opens.");
+      if (toSecs(s.presentUntil)>toSecs(close)) err('"Present until" must be before attendance closes.');
+      Object.assign(db().settings, {schoolName:school, classStart:s.classStart, presentUntil:s.presentUntil, formUrl:form, openAt:open, closeAt:close});
+      audit(me,"settings","Settings",`${s.classStart}–${s.presentUntil}`); save(); return true;
+    },
+    apiSavePerson(token, p){
+      const me=auth(token,["Admin"]), name=String(p.displayName||"").trim(); if (!name) err("Enter the full name.");
+      if (p.key){
+        const a=findAcc(p.key); if (!a) err("Account not found.");
+        const notes=[]; a.displayName=name; a.studentId=String(p.studentId||"").trim();
+        if (p.password){ if (String(p.password).length<6) err("Password needs at least 6 characters."); a.salt=rid(); a.passHash=sha256(a.salt+"|"+p.password); a.failCount=""; a.lockedUntil=""; closeReq(a.key, me.displayName); notes.push("password reset"); }
+        if (a.key!==me.key && typeof p.active==="boolean" && (a.active==="TRUE")!==p.active){ a.active=p.active?"TRUE":"FALSE"; notes.push(p.active?"activated":"deactivated"); }
+        audit(me,"account_edit",a.key,notes.join(", ")||"details");
+      } else {
+        const user=String(p.username||"").trim(), k=keyOf(user);
+        if (!validKey(k)) err("Username must be 3–40 letters, numbers, - or _."); if (findAcc(k)) err("That username is taken.");
+        if (String(p.password||"").length<6) err("Password needs at least 6 characters.");
+        const salt=rid(); db().accounts.push({key:k, username:user, displayName:name, role:"Student", studentId:String(p.studentId||"").trim()||user, active:"TRUE", passHash:sha256(salt+"|"+p.password), salt, createdAt:nowStamp(), lastLoginAt:""});
+        audit(me,"account_add",k,name);
+      }
+      save(); return true;
+    },
+    apiSaveModule(token, m){
+      const me=auth(token,["Admin"]), name=String(m.name||"").trim(); if (!name) err("Enter the module name.");
+      if (m.id){ const row=db().modules.find(x=>x.id===m.id); if (!row) err("Module not found."); row.name=name; row.lecturerKey=m.lecturerKey||row.lecturerKey; row.active=m.active===false?"FALSE":"TRUE"; audit(me,"module_edit",row.id,name); }
+      else {
+        const id=keyOf(m.code).replace(/[^a-z0-9_-]/g,""); if (!validKey(id)) err("Short code must be 3–40 letters or numbers.");
+        if (db().modules.some(x=>x.id===id)) err("That code is already used.");
+        db().modules.push({id, code:String(m.code).toUpperCase(), name, lecturerKey:m.lecturerKey||"", active:"TRUE", createdAt:nowStamp()}); audit(me,"module_add",id,name);
+      }
+      save(); return true;
+    },
+    apiChangePassword(token, cur, next){
+      const me=auth(token); if (me.passHash!==sha256(me.salt+"|"+String(cur||""))) err("Current password is incorrect.");
+      if (String(next||"").length<6) err("New password needs at least 6 characters.");
+      me.salt=rid(); me.passHash=sha256(me.salt+"|"+next); audit(me,"password_change",me.key,"Own password"); save(); return true;
+    },
+    apiExportCsv(token, f){
+      f=f||{};
+      if (f.format==="register"){
+        const me=auth(token,["Lecturer","Admin"]), month=/^\d{4}-\d{2}$/.test(f.month||"")?f.month:sgt().month, out=registerCsvLocal(month);
+        const name=`ACE_Register_${monthLabel(month).split(" ")[0].slice(0,3)}_${month.slice(0,4)}.csv`;
+        audit(me,"export_csv",name,`Register · ${out.students} students · ${out.days} days`); save();
+        return {filename:name, csv:out.csv, count:out.students};
+      }
+      const me=auth(token,["Lecturer","Admin"]); const rows=filterRecords(db().records, f).sort((a,b)=>a.submittedAt<b.submittedAt?-1:1);
+      const name=`ACE_attendance_${f&&f.month?f.month:"all-months"}_${sgt().date}.csv`;
+      audit(me,"export_csv",name,rows.length+" rows"); save();
+      return {filename:name, csv:buildCsv(rows), count:rows.length};
+    },
+    apiExportToSheet(){ err("Export to a sheet tab works when the app is connected to the Google Sheet."); }
+  };
+  return {
+    route(action, args){ try { autoAbsent(); } catch(e){} try { if (!A[action]) err("Unknown action: "+action); return {ok:true, data:A[action](...(args||[]))}; } catch(e){ return {ok:false, error:e.message}; } },
+    reload, reset(){ try { localStorage.removeItem(KEY); } catch(e){} mem=null; }
+  };
+})();
+
+/* shared by demo export (server builds its own) */
+function filterRecords(list, f){
+  f=f||{}; const q=String(f.q||"").trim().toLowerCase();
+  return list.filter(r=>(!f.month||r.month===f.month)&&(!f.module||r.moduleId===f.module)&&
+    (!f.status||(["Present","Late","Absent","Excused"].includes(f.status)?(r.status==="Approved"&&r.mark===f.status):r.status===f.status))&&
+    (!q||`${r.studentName} ${r.studentKey} ${r.studentNote} ${r.lecturerNote}`.toLowerCase().includes(q)));
+}
+function buildCsv(rows){
+  const cols=[["Record ID","id"],["Date","date"],["Day","day"],["Month","month"],["Student Key","studentKey"],["Student Name","studentName"],["Student ID","studentId"],["Module Name","moduleName"],
+    ["Submitted Time","submittedTime"],["Auto Mark","autoMark"],["Final Mark","mark"],["Status","status"],["Reviewed By","reviewedBy"],["Reviewed At","reviewedAt"],["Student Note","studentNote"],["Lecturer Note","lecturerNote"],["Source","source"]];
+  const q=v=>{ let s=String(v??""); if (/^[=+\-@]/.test(s)) s="'"+s; return /[",\r\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s; };
+  return "﻿"+[cols.map(c=>q(c[0])).join(","), ...rows.map(r=>cols.map(c=>q(c[1]==="mark"&&r.status==="Declined"?"":r[c[1]])).join(","))].join("\r\n");
+}
+
+/* =========================================================================
+   APP STATE & SYNC
+   ========================================================================= */
+const S = {
+  token:null, me:null, settings:{}, modules:[], records:[], accounts:[], audit:[], sheetUrl:"",
+  version:null, tab:null, online:true, lastSync:null, loaded:false, server:{state:"checking"},
+  filters:{month:"",module:"",status:"",q:""}, histMonth:"", drafts:{}, todayModule:"",
+  busy:false, loginErr:"", loginLock:null, leave:[], lvFile:null, confirmRes:null, pendingIds:null, requests:[], openReqIds:null, stuQ:""
+};
+const TABS = {
+  Student:[["today","Today"],["timetable","Calendar"],["history","My attendance"],["leave","MC / Leave"],["account","Account"]],
+  Lecturer:[["pending","Pending"],["calendar","Calendar"],["students","Students"],["records","All records"],["leave","MC / Leave"],["requests","Password help"],["settings","Settings"]],
+  Admin:[["overview","Overview"],["calendar","Calendar"],["students","Students"],["records","Records"],["leave","MC / Leave"],["requests","Password help"],["people","People"],["modules","Modules"],["activity","Activity"],["system","System"],["settings","Settings"]]
+};
+const canApprove = () => S.me && (S.me.role==="Lecturer" || (S.me.role==="Admin" && S.settings.adminCanApprove));
+const recList = () => S.records.slice().sort((a,b)=>(b.submittedAt||"").localeCompare(a.submittedAt||""));
+const pendingList = () => S.records.filter(r=>r.status==="Pending").sort((a,b)=>(a.submittedAt||"").localeCompare(b.submittedAt||""));
+const accByRole = role => S.accounts.find(a=>a.role===role) || {};
+const modById = id => S.modules.find(m=>m.id===id);
+
+async function run(action, args, okMsg){
+  try { const r=await api(action, ...args); if (okMsg) toast(okMsg,"ok"); await refresh(true); return r || true; }
+  catch(e){ if (e.message!=="Your session ended.") toast(e.message,"bad"); await refresh(true); return false; }
+}
+
+function toast(msg, kind=""){ const t=document.createElement("div"); t.className="toast "+kind; t.textContent=msg; $("#toasts").appendChild(t); setTimeout(()=>t.remove(), kind==="bad"?6500:4200); }
+function openModal(html){ const m=$("#modal"); m.innerHTML=`<div class="scrim" data-act="close-modal"></div><div class="sheet" role="dialog" aria-modal="true">${html}</div>`; m.hidden=false; const f=m.querySelector("input:not([readonly]),select,textarea,button.primary"); if (f) setTimeout(()=>f.focus(),30); }
+function closeModal(){ const m=$("#modal"); m.hidden=true; m.innerHTML=""; if (S.confirmRes){ S.confirmRes(false); S.confirmRes=null; } }
+function askConfirm(title, body, okLabel, danger){
+  return new Promise(res=>{ openModal(`<h2>${esc(title)}</h2><p class="muted">${esc(body)}</p><div class="sheet-f"><button class="btn" data-act="confirm-no">Cancel</button><button class="btn ${danger?"solid-danger":"primary"}" data-act="confirm-yes">${esc(okLabel)}</button></div>`); S.confirmRes=res; });
+}
+
+async function boot(){
+  S.token = store.get(tokenKey());
+  setInterval(tick, 1000);
+  setInterval(()=>{ if (!document.hidden) refresh(false); }, mode()==="demo" ? 4000 : POLL_MS);
+  document.addEventListener("visibilitychange", ()=>{ if (!document.hidden) refresh(false); });
+  window.addEventListener("storage", e=>{ if (e.key && e.key.indexOf("demo-db")>=0){ Local.reload(); refresh(false); } });
+  if (S.token){
+    try { await Promise.race([refresh(true), new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")), 45000))]); }
+    catch(e){ if (!S.me) S.loginErr = "Couldn't load your data: " + (e.message==="timeout" ? "the server is taking too long. Try again in a minute." : e.message); }
+  }
+  S.loaded = true;
+  try { render(); } catch(e){ S.me=null; S.loginErr="Something went wrong showing the app: "+e.message+". Please sign in again."; store.del(tokenKey()); S.token=null; render(); }
+  checkServer();
+}
+async function checkServer(){
+  S.server={state:"checking"}; renderSoft();
+  try { const p=await api("apiPing"); S.server={state:p.live?"live":"issues", build:p.build, time:p.serverTime, problems:p.problems||[]}; }
+  catch(e){ S.server={state:"down", error:e.message}; }
+  renderSoft();
+}
+function renderSoft(){ const ae=document.activeElement; if (S.me && S.tab!=="system") { paintLive(); return; } if (ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && ae.closest("#app")) { paintLive(); const s=$("#serverline"); if (s) s.innerHTML=serverLine(); return; } render(); }
+async function refresh(force){
+  if (!S.token) return;
+  if (S.refreshing){ if (force) S.refreshAgain=true; return; }
+  S.refreshing=true;
+  try {
+    if (mode()==="demo") Local.reload();
+    const d=await api("apiState", S.token, force?null:S.version);
+    S.online=true; S.lastSync=new Date();
+    if (!d.unchanged) applyState(d);
+  } catch(e){
+    if (S.token) S.online=false;
+    if (S.token && !S.me) S.loginErr="Signed in, but the data couldn't load: "+e.message;
+  }
+  S.refreshing=false;
+  if (S.refreshAgain){ S.refreshAgain=false; return refresh(true); }
+  try { if (S.me) render(); else paintLive(); } catch(e){ console.error(e); toast("Display error: "+e.message,"bad"); }
+}
+function applyState(d){
+  const first=!S.me;
+  S.me=d.me; S.settings=d.settings; S.modules=d.modules||[]; S.records=d.records||[]; S.version=d.version;
+  S.accounts=d.accounts||[]; S.audit=d.audit||[]; S.sheetUrl=d.sheetUrl||""; S.requests=d.requests||[];
+  const openReq=new Set(S.requests.filter(r=>r.status==="Open").map(r=>r.id+"|"+r.at));
+  if (!first && S.openReqIds && S.me.role!=="Student") S.requests.forEach(r=>{ if (r.status==="Open" && !S.openReqIds.has(r.id+"|"+r.at)) toast(`Password help: ${r.name} (${r.username}) forgot their password`,"new"); });
+  S.openReqIds=openReq;
+  const mc={}; S.records.forEach(r=>{ mc[r.id]=msgsOf(r).length; });
+  if (!first && S.msgCounts) S.records.forEach(r=>{ const m=msgsOf(r), prev=S.msgCounts[r.id]||0; if (m.length>prev){ const last=m[m.length-1]; if (last.by!==S.me.key) toast(S.me.role==="Student"?`New message from ${last.name}`:`Message from ${r.studentName}: “${last.text.slice(0,60)}${last.text.length>60?"…":""}”`,"new"); } });
+  S.msgCounts=mc;
+  const prevLeave=S.leaveMap; S.leave=d.leave||[]; S.leaveMap={}; S.leave.forEach(x=>S.leaveMap[x.id]=x.status);
+  if (!first && prevLeave){
+    if (S.me.role!=="Student") S.leave.forEach(x=>{ if (!prevLeave[x.id]) toast(`New MC / leave from ${x.name}`,"new"); });
+    else S.leave.forEach(x=>{ if (prevLeave[x.id]==="Pending" && x.status!=="Pending") toast(`Your MC was ${x.status.toLowerCase()}${x.reply?": "+x.reply:""}`,"new"); });
+  }
+  if (S.me.role==="Student") setTimeout(absenceAlert, 50);
+  if (!S.tab || !TABS[S.me.role].some(t=>t[0]===S.tab)) S.tab=TABS[S.me.role][0][0];
+  const pend=new Set(S.records.filter(r=>r.status==="Pending").map(r=>r.id));
+  if (!first && S.pendingIds){
+    if (S.me.role!=="Student") S.records.forEach(r=>{ if (r.status==="Pending" && !S.pendingIds.has(r.id)) toast(`New attendance: ${r.studentName} · ${fmt12(r.submittedTime)} · ${r.source}`,"new"); });
+    else S.records.forEach(r=>{ if (r.status!=="Pending" && S.pendingIds.has(r.id)) toast(`Your ${dateLabel(r.date,{day:"numeric",month:"short"})} attendance: ${r.status==="Approved"?"approved as "+r.mark:"declined"}`,"new"); });
+  }
+  S.pendingIds=pend;
+}
+async function doLogin(){
+  const u=$("#lg-user").value, p=$("#lg-pass").value;
+  S.loginUser=u;
+  if (!u.trim() || !p){ S.loginErr="Enter your username and password."; render(); return; }
+  if (S.loginLock && S.loginLock.user===u.trim().toLowerCase() && S.loginLock.until>Date.now()) return;
+  S.busy=true; S.loginErr=""; render();
+  try {
+    const r=await api("apiLogin", u, p);
+    if (r.status==="ok"){
+      S.loginLock=null; S.calMonth=S.calDay=S.ttMonth=S.calStudent=null; S.token=r.token; store.set(tokenKey(), r.token); S.version=null; S.pendingIds=null; S.openReqIds=null;
+      await refresh(true);
+      if (!S.me && !S.loginErr) S.loginErr="Signed in, but the data didn't load. Try again.";
+    } else if (r.status==="locked"){
+      S.loginLock={user:u.trim().toLowerCase(), until:Date.now()+r.wait*1000, left:r.left};
+      S.loginErr="";
+    } else if (r.status==="blocked"){
+      S.loginLock={user:u.trim().toLowerCase(), until:0, blocked:true};
+      S.loginErr="";
+    } else {
+      S.loginLock=null;
+      S.loginErr = "Username or password is incorrect." + (r.beforeWait>0 ? ` ${r.beforeWait} more wrong ${r.beforeWait===1?"try":"tries"} and you'll have to wait 1 minute.` : r.left ? ` ${r.left} ${r.left===1?"try":"tries"} left before the account is locked.` : "");
+    }
+  } catch(e){ S.loginErr=e.message; }
+  S.busy=false; render();
+}
+function lockMsg(){
+  const L=S.loginLock; if (!L) return "";
+  if (L.blocked) return `<div class="err" role="alert">This account is locked after 10 wrong passwords. Tap <b>Forgot password?</b> to ask your lecturer or admin to reset it.</div>`;
+  const sec=Math.max(0,Math.ceil((L.until-Date.now())/1000));
+  if (!sec) return "";
+  return `<div class="err" role="alert" data-lockmsg>Too many wrong passwords. Try again in <span class="mono" data-lockcount>${Math.floor(sec/60)}:${String(sec%60).padStart(2,"0")}</span>. ${L.left} ${L.left===1?"try":"tries"} left before the account is locked.</div>`;
+}
+function openForgot(){
+  const u=($("#lg-user")||{}).value||"";
+  openModal(`<h2>Forgot your password?</h2><p class="muted">Send a request to your lecturer and the admin. They'll reset it, usually back to your Student ID, and tell you.</p>
+    <label class="field"><span>Username (Student ID)</span><input class="input" id="fp-user" value="${esc(u)}" autocapitalize="characters" spellcheck="false" placeholder="e.g. G3747353M"></label>
+    <label class="field"><span>Message (optional)</span><input class="input" id="fp-msg" maxlength="300" placeholder="e.g. I changed it and forgot"></label>
+    <div class="sheet-f"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" data-act="send-forgot">Send request</button></div>`);
+}
+async function sendForgot(btn){
+  const u=$("#fp-user").value.trim(), m=$("#fp-msg").value.trim();
+  if (!u){ toast("Enter your username (Student ID).","bad"); return; }
+  btn.disabled=true;
+  try { await api("apiRequestReset", u, m); closeModal(); openModal(`<h2>Request sent</h2><p class="muted">Your lecturer and the admin can see your request now. When they reset your password, sign in with the password they give you (usually your Student ID), then change it under <b>Account</b>.</p><div class="sheet-f"><button class="btn primary" data-act="close-modal">OK</button></div>`); }
+  catch(e){ toast(e.message,"bad"); btn.disabled=false; }
+}
+function endSession(msg){
+  setMenu(false); store.del(tokenKey());
+  S.loginUser="";
+  S.token=null; S.me=null; S.records=[]; S.accounts=[]; S.audit=[]; S.version=null; S.tab=null; S.drafts={}; S.pendingIds=null;
+  closeModal(); if (msg) S.loginErr=msg; render();
+}
+function logout(){ const t=S.token; endSession(""); if (t) api("apiLogout", t).catch(()=>{}); }
+
+/* ---------- connection labels ---------- */
+function liveHtml(){
+  const m=mode(), t=S.lastSync?fmt12(sgt(S.lastSync).time,true):"—";
+  if (m==="demo") return `<span class="live"><span class="dot demo"></span>Demo · this browser only</span>`;
+  if (!S.online) return `<span class="live"><span class="dot off"></span>Offline · retrying</span>`;
+  return `<span class="live"><span class="dot"></span>Live · Google Sheet · ${t}</span>`;
+}
+function paintLive(){ document.querySelectorAll("[data-live]").forEach(e=>e.innerHTML=liveHtml()); }
+function serverLine(){
+  const s=S.server||{state:"checking"}, m=mode();
+  if (m==="demo") return `<div class="conn demo"><div>${liveHtml()}</div><span class="hint">Demo mode: data stays in this browser. To share one database, put the web app link and access key in CONFIG at the top of index.html, or connect below.</span>${connectForm(true)}</div>`;
+  if (s.state==="checking") return `<div class="conn"><span class="hint">Connecting to the Google Sheet…</span></div>`;
+  if (s.state==="live") return `<div class="conn ok">${liveHtml().replace(" · "+(S.lastSync?fmt12(sgt(S.lastSync).time,true):"—"),"")}<span class="hint">Server build ${esc(s.build)} · ${esc(s.time)}${m==="script"?" · served by Apps Script":""}</span>${m==="remote"&&!remoteConn().fromConfig?connectForm(false):""}</div>`;
+  if (s.state==="issues") return `<div class="conn bad"><b>Connected, but setup isn't finished</b><span class="hint">${s.problems.map(esc).join("<br>")}</span></div>`;
+  return `<div class="conn bad"><b>Can't connect to the Google Sheet</b><span class="hint">${esc(s.error)}</span>${m==="remote"&&!remoteConn().fromConfig?connectForm(false):""}</div>`;
+}
+function connectForm(closed){
+  const c=remoteConn();
+  return `<details class="connect" ${closed?"":"open"}><summary>${c?"Change Google Sheet connection":"Connect Google Sheet (this browser)"}</summary>
+    <div class="conn-row"><input class="input" id="cx-url" type="url" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(c&&!c.fromConfig?c.url:"")}" autocapitalize="none" spellcheck="false">
+    <input class="input" id="cx-key" type="password" placeholder="Access key" value="${esc(c&&!c.fromConfig?c.key:"")}" autocapitalize="none" spellcheck="false">
+    <button class="btn primary" type="button" data-act="connect">Connect</button></div>
+    ${c&&!c.fromConfig?`<button class="btn small" type="button" data-act="disconnect">Disconnect (back to demo)</button>`:""}</details>`;
+}
+async function connect(){
+  const url=$("#cx-url").value.trim(), key=$("#cx-key").value.trim();
+  if (!/^https:\/\/script\.google(usercontent)?\.com\/.+\/exec$/.test(url)){ toast("Paste the web app link from Apps Script. It starts with https://script.google.com/ and ends with /exec.","bad"); return; }
+  if (!key){ toast("Paste the access key from the Apps Script Execution log.","bad"); return; }
+  const prev={u:store.get("sheetUrl"), k:store.get("sheetKey")};
+  store.set("sheetUrl",url); store.set("sheetKey",key);
+  try { const p=await api("apiPing"); toast(p.live?"Connected to the Google Sheet.":"Connected. Setup still needs attention.", p.live?"ok":"bad"); location.reload(); }
+  catch(e){ if (prev.u){ store.set("sheetUrl",prev.u); store.set("sheetKey",prev.k||""); } else { store.del("sheetUrl"); store.del("sheetKey"); } toast("Couldn't connect: "+e.message,"bad"); }
+}
+function disconnect(){ store.del("sheetUrl"); store.del("sheetKey"); location.reload(); }
+
+/* =========================================================================
+   SCREENS
+   ========================================================================= */
+function render(){
+  if (!S.loaded && S.token) return;
+  const ae=document.activeElement, fid=ae&&ae.id, ss=ae&&ae.selectionStart, se=ae&&ae.selectionEnd;
+  const dn=document.querySelector(".drawer-nav"), dTop=dn?dn.scrollTop:0;
+  $("#app").innerHTML = S.me ? appView() : loginView();
+  if (dTop){ const n=document.querySelector(".drawer-nav"); if (n) n.scrollTop=dTop; }
+  fitTabs();
+  if (fid){ const el=document.getElementById(fid); if (el){ el.focus({preventScroll:true}); try { if (ss!=null) el.setSelectionRange(ss,se); } catch(e){} } }
+  document.title=(S.me && S.me.role!=="Student" && pendingList().length ? `(${pendingList().length}) ` : "")+"ACE Attendance";
+  tick();
+}
+function masthead(){
+  const school=S.settings.schoolName||"American Center for Education";
+  return `<header class="top"><div class="wrap"><div class="top-in">
+    <div class="mark" aria-hidden="true">ACE</div>
+    <div class="school"><b>${esc(school)}</b><span>Attendance Register · v${APP_VERSION}</span></div>
+    ${S.me?`<div class="who"><span data-live>${liveHtml()}</span><span class="role">${esc(S.me.role)}</span><b>${esc(S.me.displayName)}</b><button class="btn small" data-act="logout">Log out</button></div>
+    <button class="menu-btn" type="button" data-act="menu" aria-label="Open menu" aria-expanded="${S.menuOpen?"true":"false"}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Menu${totalBadge()?`<span class="count">${totalBadge()}</span>`:""}</button>`:""}
+  </div>${S.me?tabsView():""}</div></header>${S.me&&S.menuOpen?drawerView():""}`;
+}
+function tabCounts(){
+  const pc=S.me.role==="Student"?0:pendingList().length;
+  const rc=S.me.role==="Student"?0:S.requests.filter(r=>r.status==="Open").length;
+  const uc=unreadCount(), lc=S.me.role==="Student"?S.leave.filter(x=>x.status!=="Pending"&&!leaveSeen(x)).length:S.leave.filter(x=>x.status==="Pending").length;
+  return id => (id==="pending"||id==="overview")?pc: id==="requests"?rc: (id==="records"||id==="history")?uc: id==="leave"?lc: 0;
+}
+function totalBadge(){ const c=tabCounts(); const seen=new Set(); return TABS[S.me.role].reduce((n,[id])=>{ const v=c(id); const k=id==="overview"||id==="pending"?"p":id; if (seen.has(k)) return n; seen.add(k); return n+v; },0); }
+function tabsView(){
+  const c=tabCounts();
+  return `<nav class="tabs" aria-label="Sections">${TABS[S.me.role].map(([id,label])=>{ const n=c(id), badge=n?`<span class="count">${n}</span>`:""; return `<button class="tab" data-act="tab" data-id="${id}" ${S.tab===id?'aria-current="page"':""}>${label}${badge}</button>`; }).join("")}</nav>`;
+}
+const TAB_HELP = {today:"Submit today's attendance", timetable:"Your classes and modules", history:"Your marks and messages", leave:"Medical certificate (MC) and leave", account:"Change your password",
+  pending:"Approve or decline submissions", overview:"Today at a glance", calendar:"Who came, modules this month", students:"Class list and attendance %", records:"Every record, edit and export",
+  requests:"Students who forgot their password", settings:"Times and permissions", people:"Accounts, add or deactivate", modules:"Module list", activity:"Who did what, when", system:"Google Sheet connection"};
+function drawerView(){
+  const c=tabCounts();
+  return `<div class="drawer" role="dialog" aria-modal="true" aria-label="Menu"><div class="scrim" data-act="menu-close"></div><div class="drawer-in ${S.menuAnim?"anim":""}">
+    <div class="drawer-h"><div class="who-d"><b>${esc(S.me.displayName)}</b><span class="role">${esc(S.me.role)}</span> <span class="sync" data-live>${liveHtml()}</span></div><button class="drawer-x" type="button" data-act="menu-close" aria-label="Close menu">×</button></div>
+    <nav class="drawer-nav" aria-label="Sections">${TABS[S.me.role].map(([id,label])=>{ const n=c(id); return `<button class="d-item" type="button" data-act="tab" data-id="${id}" ${S.tab===id?'aria-current="page"':""}><span class="d-t"><b>${label}</b><small>${esc(TAB_HELP[id]||"")}</small></span>${n?`<span class="count">${n}</span>`:""}</button>`; }).join("")}</nav>
+    <div class="drawer-f"><button class="btn" type="button" data-act="logout">Log out</button></div></div></div>`;
+}
+const COPYRIGHT = "© 2026 Lin Khant Wai Yan. All rights reserved.";
+function footer(){ return `<footer class="wrap"><div class="foot"><span>${esc(S.settings.schoolName||"American Center for Education")} · Attendance Register v${APP_VERSION} · All times Singapore (SGT, UTC+8)</span><span class="copy">${COPYRIGHT} Designed and developed by <b>Lin Khant Wai Yan</b>.</span></div></footer>`; }
+function loginView(){
+  return masthead()+`<main class="wrap"><div class="login"><div class="login-card">
+    <div><div class="label">Today · Singapore</div><div class="bigclock" data-clock>--:--</div><div class="muted" data-today>—</div></div>
+    <form class="panel stack" id="login-form">
+      <div><h1>Sign in</h1><p class="muted">Students sign in with their Student ID. Lecturers and admin use the same page. Your role opens automatically.</p></div>
+      <label class="field"><span>Username</span><input class="input" id="lg-user" value="${esc(S.loginUser||"")}" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+      <label class="field"><span>Password</span><input class="input" id="lg-pass" type="password" autocomplete="current-password" required></label>
+      ${S.loginErr?`<div class="err" role="alert">${esc(S.loginErr)}</div>`:""}
+      ${lockMsg()}
+      <button class="btn primary" type="submit" ${S.busy?"disabled":""}>${S.busy?"Signing in…":"Sign in"}</button>
+      <button class="btn small" type="button" data-act="forgot" style="align-self:flex-start;border:0;padding-inline:0;color:var(--navy-2)">Forgot password?</button>
+    </form>
+    <div id="serverline">${serverLine()}</div>
+  </div></div></main>`+footer();
+}
+function appView(){
+  const r=S.me.role, t=S.tab; let body="";
+  if (r==="Student") body = t==="today"?studentToday(): t==="timetable"?timetableView(): t==="history"?studentHistory(): t==="leave"?studentLeave(): accountView();
+  if (r==="Lecturer") body = t==="pending"?lecturerPending(): t==="calendar"?calendarView(): t==="students"?studentsView(): t==="records"?recordsView(): t==="leave"?staffLeave(): t==="requests"?requestsView(): lecturerSettings();
+  if (r==="Admin") body = t==="overview"?adminOverview(): t==="calendar"?calendarView(): t==="students"?studentsView(): t==="records"?recordsView(): t==="leave"?staffLeave(): t==="requests"?requestsView(): t==="people"?peopleView(): t==="modules"?modulesView(): t==="activity"?activityView(): t==="system"?systemView(): adminSettings();
+  return masthead()+`<main class="wrap">${body}</main>`+footer();
+}
+
+const chip=(k,text)=>`<span class="chip c-${esc(String(k).toLowerCase())}">${esc(text||k)}</span>`;
+const statusChip=r=>chip(r.status);
+const markChip=r=>r.status==="Declined"?`<span class="faint">—</span>`:chip(r.mark||"Present");
+function stats(list){
+  const c={p:0,pr:0,l:0,d:0};
+  list.forEach(r=>{ if (r.status==="Pending") c.p++; else if (r.status==="Declined") c.d++; else if (r.mark==="Late") c.l++; else if (r.mark==="Present") c.pr++; });
+  return `<div class="stats"><div class="stat s-pending"><b>${c.p}</b><span>Pending</span></div><div class="stat s-present"><b>${c.pr}</b><span>Present</span></div><div class="stat s-late"><b>${c.l}</b><span>Late</span></div><div class="stat s-declined"><b>${c.d}</b><span>Declined</span></div></div>`;
+}
+function timeline(){
+  const m=x=>toSecs(x+":00")/60, op=m(openAt()), pu=m(untilAt())+1, cl=m(closeAt())+1;
+  const from=op-20, span=(cl+20)-from, pct=x=>((x-from)/span*100).toFixed(2);
+  return `<div class="tl" aria-hidden="true"><div class="tl-bar"><i class="tl-early" style="width:${pct(op)}%"></i><i class="tl-present" style="width:${(pct(pu)-pct(op)).toFixed(2)}%"></i><i class="tl-late" style="width:${(pct(cl)-pct(pu)).toFixed(2)}%"></i><i class="tl-closed" style="flex:1"></i></div>
+    <div class="tl-tick" style="left:${pct(op)}%"><span>${fmt12(openAt()+":00")}</span></div><div class="tl-tick up" style="left:${pct(pu)}%"><span>${fmt12(untilAt()+":00")}</span></div><div class="tl-tick" style="left:${pct(cl)}%"><span>${fmt12(closeAt()+":00")}</span></div>
+    <div class="tl-now" data-tlnow data-from="${from}" data-span="${span}"></div></div>
+    <div class="tl-legend"><span><b style="background:#BFE3CF"></b>Present</span><span><b style="background:#F6DDB0"></b>Late</span><span><b style="background:#F3C7CB"></b>Closed: Absent</span><span><b style="background:var(--red)"></b>Now</span></div>`;
+}
+function copyField(id,value){ return `<div class="copyrow"><input class="input" id="${id}" value="${esc(value)}" readonly><button class="btn small" type="button" data-act="copy" data-id="${id}">Copy</button></div>`; }
+
+/* ----- student ----- */
+/* ----- messages ----- */
+const seenKey = () => "seen:"+(S.me?S.me.key:"");
+function seenMap(){ try { return JSON.parse(store.get(seenKey())||"{}"); } catch(e){ return {}; } }
+function markSeen(r){ const m=seenMap(); m[r.id]=msgsOf(r).length; store.set(seenKey(), JSON.stringify(m)); }
+function isUnread(r){ const m=msgsOf(r); if (!m.length || m[m.length-1].by===S.me.key) return false; return (seenMap()[r.id]||0) < m.length; }
+function unreadCount(){ return S.me ? S.records.filter(isUnread).length : 0; }
+function msgTag(r){ const n=msgsOf(r).length; if (!n) return ""; return isUnread(r)?`<span class="chip c-declined">New message</span>`:`<span class="tag">${n} message${n>1?"s":""}</span>`; }
+function thread(r){
+  const m=msgsOf(r);
+  if (!m.length) return `<p class="hint">No messages yet.</p>`;
+  return `<div class="thread">${m.map(x=>`<div class="bubble ${x.role==="Student"?"stu":"staff"} ${x.by===S.me.key?"mine":""}"><div class="bubble-h"><b>${esc(x.by===S.me.key?"You":x.name)}</b> <span class="faint">${stampLabel(x.at)}</span></div><div>${esc(x.text)}</div></div>`).join("")}</div>`;
+}
+function replyBox(r){
+  return `<div class="reply"><textarea class="input" id="msg-${esc(r.id)}" maxlength="500" rows="2" placeholder="${S.me.role==="Student"?"Write to your lecturer…":"Reply to "+esc(r.studentName)+"…"}">${esc((S.drafts["msg:"+r.id])||"")}</textarea><button class="btn primary" type="button" data-act="send-msg" data-id="${esc(r.id)}">Send</button></div>`;
+}
+function openThread(id){
+  const r=S.records.find(x=>x.id===id); if (!r) return;
+  markSeen(r);
+  openModal(`<div><div class="label">${dateLabel(r.date,{weekday:"long",day:"numeric",month:"long"})} · ${fmt12(r.submittedTime)}</div><h2>${S.me.role==="Student"?"Messages with your lecturer":esc(r.studentName)}</h2>
+    <div class="btns" style="margin-top:6px">${statusChip(r)} ${markChip(r)} ${chip(r.autoMark,"Auto: "+r.autoMark)}</div></div>
+    ${thread(r)}${replyBox(r)}
+    <div class="sheet-f"><button class="btn" data-act="close-modal">Close</button></div>`);
+  S.openThreadId=id; render();
+}
+async function sendMsg(id, btn){
+  const el=document.getElementById("msg-"+id), text=(el&&el.value||"").trim();
+  if (!text){ toast("Write a message first.","bad"); return; }
+  btn.disabled=true;
+  const inModal=!!btn.closest("#modal"), inRecord=inModal&&(!!$("#rm-status")||!!$("#rm-view"));
+  delete S.drafts["msg:"+id];
+  if (await run("apiAddMessage",[S.token,id,text],"Message sent.")){ const r=S.records.find(x=>x.id===id); if (r) markSeen(r); if (inModal) inRecord?openRecord(id):openThread(id); }
+  else btn.disabled=false;
+}
+
+/* ----- calendar + timetable (lecturer + admin) ----- */
+function dayStats(date){
+  const studs=S.accounts.filter(a=>a.role==="Student"&&a.active), today=sgt().date;
+  const out={P:[],L:[],A:[],E:[],Q:[],X:[],N:[]};
+  studs.forEach(a=>{ const r=S.records.find(x=>x.date===date&&x.studentKey===a.key);
+    if (!r){ if (date<today) out.N.push({a}); else if (date===today) out.N.push({a,soFar:true}); return; }
+    const k=r.status==="Approved"?({Present:"P",Late:"L",Absent:"A",Excused:"E"}[r.mark]||"P"):r.status==="Declined"?"X":"Q"; out[k].push({a,r}); });
+  return {studs, ...out};
+}
+function missedThisMonth(month){
+  const today=sgt().date, studs=S.accounts.filter(a=>a.role==="Student"&&a.active), tt=ttNow();
+  const [y,m]=month.split("-").map(Number), dim=new Date(Date.UTC(y,m,0)).getUTCDate(), days=[];
+  for (let d=1; d<=dim; d++){ const ds=`${month}-${String(d).padStart(2,"0")}`; if (ds<today && isClassDayC(ds,tt)) days.push(ds); }
+  return studs.map(a=>{ let miss=0, late=0; const dates=[]; days.forEach(d=>{ const r=S.records.find(x=>x.date===d&&x.studentKey===a.key); if (!r || r.status==="Declined" || (r.status==="Approved"&&r.mark==="Absent")){ miss++; dates.push(d); } else if (r.status==="Approved"&&r.mark==="Late") late++; }); return {a,miss,late,dates,of:days.length}; })
+    .filter(x=>x.miss>0).sort((x,y)=>y.miss-x.miss||y.late-x.late);
+}
+function calendarView(){
+  const today=sgt().date; if (!S.calMonth) S.calMonth=today.slice(0,7); if (!S.calDay) S.calDay=today;
+  const month=S.calMonth, tt=ttNow(), [y,m]=month.split("-").map(Number);
+  const first=new Date(Date.UTC(y,m-1,1)), lead=(first.getUTCDay()+6)%7, dim=new Date(Date.UTC(y,m,0)).getUTCDate();
+  const studs=S.accounts.filter(a=>a.role==="Student"&&a.active), one=S.calStudent?studs.find(a=>a.key===S.calStudent):null;
+  const cells=[]; for (let i=0;i<lead;i++) cells.push(`<div class="cal-c empty"></div>`);
+  for (let d=1; d<=dim; d++){
+    const ds=`${month}-${String(d).padStart(2,"0")}`, cls=isClassDayC(ds,tt), before=tt.start&&ds<tt.start, after=tt.end&&ds>tt.end;
+    let body="", kind="";
+    const ml=cls?modLabelFor(ds,tt):null, modLbl=ml?`<span class="cal-mod" title="${esc(ml.name)}">${esc(ml.code)}</span>`:"";
+    if (!cls){ kind="off"; body=`<span class="cal-s">${before?"Not started":after?"Ended":"No class"}</span>`; }
+    else if (one){
+      const r=S.records.find(x=>x.date===ds&&x.studentKey===one.key);
+      if (r){ const k=r.status==="Approved"?r.mark:r.status; kind="k-"+k.toLowerCase(); body=`<span class="cal-big">${{Present:"P",Late:"L",Absent:"A",Excused:"E",Pending:"?",Declined:"X"}[k]||"?"}</span>`; }
+      else if (ds<today){ kind="k-miss"; body=`<span class="cal-big">–</span>`; }
+      else body=`<span class="cal-s">${ds===today?"Not yet":"Class"}</span>`;
+    } else if (ds<=today){
+      const st=dayStats(ds), came=st.P.length+st.L.length+st.Q.length, tot=st.studs.length||1, miss=st.N.length+st.A.length+st.X.length;
+      kind=ds<today&&miss?(miss/tot>0.2?"k-bad":"k-warn"):"k-ok";
+      body=`<span class="cal-n">${came}/${st.studs.length}</span><span class="cal-bar"><i style="width:${Math.round(came/tot*100)}%"></i></span>${ds<today&&miss?`<span class="cal-s">${miss} missing</span>`:""}`;
+    } else body=`<span class="cal-s">Class</span>`;
+    cells.push(`<button type="button" class="cal-c ${kind} ${ds===today?"today":""} ${ds===S.calDay?"sel":""}" data-act="cal-day" data-id="${ds}"><span class="cal-d">${d}</span>${modLbl}${body}</button>`);
+  }
+  const prev=new Date(Date.UTC(y,m-2,1)).toISOString().slice(0,7), next=new Date(Date.UTC(y,m,1)).toISOString().slice(0,7);
+  const missed=missedThisMonth(month);
+  return `<div class="stack">
+    <div class="panel-h"><div><div class="label">Who came, who didn't</div><h1>Calendar</h1></div>
+      <label class="field" style="min-width:min(300px,100%)"><span>Show</span><select class="input" id="cal-stu" data-calstu><option value="">All students</option>${studs.map(a=>`<option value="${esc(a.key)}" ${a.key===S.calStudent?"selected":""}>${esc(a.displayName)}</option>`).join("")}</select></label></div>
+    <div class="cal-wrap"><section class="panel">
+      <div class="cal-nav"><button class="btn small" data-act="cal-month" data-id="${prev}" aria-label="Previous month">‹</button><h2>${monthLabel(month)}</h2><button class="btn small" data-act="cal-month" data-id="${next}" aria-label="Next month">›</button></div>
+      <div class="cal-grid">${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(w=>`<div class="cal-w">${w}</div>`).join("")}${cells.join("")}</div>
+      <div class="tl-legend" style="margin-top:10px">${one?`<span><b style="background:#BFE3CF"></b>P Present</span><span><b style="background:#F6DDB0"></b>L Late</span><span><b style="background:#F3C7CB"></b>A / X / – missed</span>`:`<span><b style="background:#BFE3CF"></b>Everyone came</span><span><b style="background:#F6DDB0"></b>A few missing</span><span><b style="background:#F3C7CB"></b>More than 20% missing</span>`}<span><b style="background:#EEF0F4"></b>No class</span></div>
+    </section>
+    <section class="panel stack">${dayPanel(S.calDay)}</section></div>
+    ${monthModulesCard(month)}
+    <div class="grid2"><section class="panel stack"><h2>Missed most in ${monthLabel(month).split(" ")[0]}</h2>
+      ${missed.length?`<div class="list">${missed.slice(0,8).map(x=>`<button type="button" class="li li-btn" data-act="cal-pick" data-id="${esc(x.a.key)}"><div><b>${esc(x.a.displayName)}</b><div class="muted" style="font-size:.84rem">Missed ${x.dates.map(d=>dateLabel(d,{day:"numeric",month:"short"})).join(", ")}</div></div><span class="chip c-declined">${x.miss} of ${x.of}</span></button>`).join("")}</div>`
+      :`<div class="empty"><b>Nobody has missed a class day</b><span>Students who miss days appear here, most first.</span></div>`}
+      <p class="hint">Missed = no submission, Absent or Declined on a past class day. Tap a name to see their days.</p></section>
+    ${S.me.role==="Admin"?timetablePanel():timetableReadOnly()}</div></div>`;
+}
+function dayPanel(ds){
+  const tt=ttNow(), cls=isClassDayC(ds,tt), today=sgt().date, ov=(tt.overrides||{})[ds];
+  const recorded=!!(tt.recDates||{})[ds], canToggle=S.me.role==="Admin" && ds>=today && !(cls&&recorded);
+  const toggle=canToggle?`<button class="btn small" type="button" data-act="toggle-day" data-id="${ds}">${cls?"Mark as no class":"Mark as class day"}</button>${ov?` <span class="hint">Changed from the usual timetable</span>`:""}`
+    :ds<today?`<span class="hint">Past days are locked. They always show what was really recorded.</span>`:recorded?`<span class="hint">This day has attendance records, so it stays a class day.</span>`:"";
+  const di=dayInfoC(ds);
+  const head=`<div class="panel-h" style="margin:0"><div><div class="label">${ds===today?"Today":ds<today?"Past day":"Upcoming"}</div><h2>${dateLabel(ds,{weekday:"long",day:"numeric",month:"long"})}</h2>${cls&&di.moduleName?`<p class="muted" style="margin-top:4px">${esc(di.moduleName)} · ${esc(timeRange(di.classStart,di.classEnd))}${di.lecturerName?` · ${esc(di.lecturerName)}`:""}</p>`:""}</div></div>`;
+  if (!cls) return head+`<p class="muted">${ds<today?"No attendance was recorded on this day, so it is not counted.":tt.start&&ds<tt.start?"Before the start date. Not counted.":tt.end&&ds>tt.end?"After the end date. Not counted.":"No class on this day. Students can't submit and nothing is counted."}</p><div>${toggle}</div>`;
+  if (ds>today) return head+`<p class="muted">Class day. Attendance opens on the day.</p><div>${toggle}</div>`;
+  const st=dayStats(ds);
+  const grp=(title,arr,cls2,showTime)=>arr.length?`<div><div class="label" style="margin-bottom:4px">${title} (${arr.length})</div><div class="namegrid">${arr.map(x=>`<span class="nm ${cls2}">${esc(x.a.displayName)}${showTime&&x.r?` <span class="mono faint">${fmt12(x.r.submittedTime)}</span>`:""}${x.r&&msgsOf(x.r).length?` <button type="button" class="linkbtn" data-act="open-thread" data-id="${esc(x.r.id)}">message</button>`:""}</span>`).join("")}</div></div>`:"";
+  return head+`<div class="stats" style="grid-template-columns:repeat(4,minmax(0,1fr))"><div class="stat s-present"><b>${st.P.length}</b><span>Present</span></div><div class="stat s-late"><b>${st.L.length}</b><span>Late</span></div><div class="stat s-pending"><b>${st.Q.length}</b><span>Pending</span></div><div class="stat s-declined"><b>${st.N.length+st.A.length+st.X.length}</b><span>${ds===today?"Not yet / absent":"Missing"}</span></div></div>
+    ${grp(ds===today?"Not submitted yet":"Did not submit",st.N,"miss",false)}${grp("Absent",st.A,"miss",false)}${grp("Excused (MC)",st.E,"",false)}${grp("Declined",st.X,"miss",true)}${grp("Late",st.L,"late",true)}${grp("Pending",st.Q,"",true)}${grp("Present",st.P,"ok",true)}
+    <div>${toggle}</div>`;
+}
+function blocksList(editable){
+  const bl=(ttNow().blocks||[]).slice().sort((a,b)=>a.startDate.localeCompare(b.startDate)), today=sgt().date;
+  if (!bl.length) return `<div class="empty"><b>No module dates yet</b><span>${editable?"Add the module, dates and class time. Next month's module can be added now.":"Your timetable will appear here when the admin adds it."}</span></div>`;
+  return `<div class="list">${bl.map(b=>{ const state=b.endDate<today?"Done":b.startDate<=today?"Now":"Upcoming";
+    return `<div class="li"><div><b>${esc(b.moduleName)}</b> <span class="tag">${esc(modCode(b.moduleId,b.moduleName))}</span>
+      <div class="muted" style="font-size:.86rem">${dateLabel(b.startDate,{day:"numeric",month:"short"})} – ${dateLabel(b.endDate,{day:"numeric",month:"short",year:"numeric"})} · ${esc(daysLabel(b.days))} · ${esc(timeRange(b.classStart,b.classEnd))}${b.lecturerName?` · ${esc(b.lecturerName)}`:""}</div></div>
+      <div class="btns">${chip(state==="Now"?"Approved":state==="Upcoming"?"Pending":"Excused",state)}${editable&&state!=="Done"?`<button class="btn small" type="button" data-act="edit-block" data-id="${esc(b.id)}">Edit</button>`:""}</div></div>`; }).join("")}</div>`;
+}
+function openBlock(id){
+  const b=id?(ttNow().blocks||[]).find(x=>x.id===id):null, lecs=S.accounts.filter(a=>a.role==="Lecturer"), last=(ttNow().blocks||[]).slice().sort((x,y)=>y.endDate.localeCompare(x.endDate))[0];
+  const start=b?b.startDate:(last?nextClassDay(last.endDate,Object.assign({},ttNow(),{blocks:[]})):sgt().date);
+  const wd=[["1","Mon"],["2","Tue"],["3","Wed"],["4","Thu"],["5","Fri"],["6","Sat"],["7","Sun"]], days=b?b.days:[1,2,3,4,5], started=!!b&&b.startDate<sgt().date;
+  openModal(`<h2>${b?"Edit module dates":"Add module dates"}</h2>
+    <label class="field"><span>Module name</span><input class="input" id="bk-name" list="bk-mods" value="${esc(b?b.moduleName:"")}" placeholder="e.g. Information Privacy, Security and Continuity"><datalist id="bk-mods">${S.modules.map(m=>`<option value="${esc(m.name)}">`).join("")}</datalist></label>
+    <label class="field"><span>Lecturer</span><select class="input" id="bk-lec">${lecs.map(l=>`<option value="${esc(l.key)}" ${b&&b.lecturerKey===l.key?"selected":""}>${esc(l.displayName)}</option>`).join("")}</select></label>
+    ${started?`<div class="note">This module has already started. Changes to the module, time or weekdays apply <b>from today</b>. Days before today and all attendance stay exactly as they are.</div>`:""}
+    <div class="fields"><label class="field"><span>First day</span><input class="input" type="date" id="bk-start" value="${esc(start)}" ${started?"readonly disabled":""}></label><label class="field"><span>Last day</span><input class="input" type="date" id="bk-end" value="${esc(b?b.endDate:"")}"></label></div>
+    <div class="fields"><label class="field"><span>Class starts</span><input class="input" type="time" id="bk-cs" value="${esc(b?b.classStart:(S.settings.classStart||"09:00"))}"></label><label class="field"><span>Class ends</span><input class="input" type="time" id="bk-ce" value="${esc(b?b.classEnd:(S.settings.classEnd||"12:00"))}"></label></div>
+    <div class="field"><span>Class weekdays</span><div class="wdays">${wd.map(([n,l])=>`<label><input type="checkbox" id="bk-d${n}" ${days.includes(+n)?"checked":""}><span>${l}</span></label>`).join("")}</div></div>
+    <p class="hint">Attendance opens 30 minutes before class, Present for the first 20 minutes, closes 30 minutes after start (same pattern as Settings).</p>
+    <div class="sheet-f">${b?`<button class="btn danger" type="button" data-act="del-block" data-id="${esc(b.id)}" style="margin-right:auto">${started?"End module":"Delete"}</button>`:""}<button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" type="button" data-act="save-block" data-id="${esc(b?b.id:"")}">Save</button></div>`);
+}
+async function saveBlock(id){
+  const p={id:id||"", moduleName:$("#bk-name").value.trim(), lecturerKey:($("#bk-lec")||{}).value||"", startDate:$("#bk-start").value, endDate:$("#bk-end").value,
+    classStart:$("#bk-cs").value, classEnd:$("#bk-ce").value, days:["1","2","3","4","5","6","7"].filter(n=>$("#bk-d"+n).checked).map(Number)};
+  const r=await run("apiSaveBlock",[S.token,p]);
+  if (r){ closeModal(); toast(r.split?`Saved. Past days kept; the new details start ${dateLabel(r.from,{day:"numeric",month:"short"})}.`:id?"Timetable updated.":"Module dates added.","ok"); }
+}
+async function deleteBlock(id){
+  const b=(ttNow().blocks||[]).find(x=>x.id===id), started=!!b&&b.startDate<sgt().date;
+  closeModal();
+  const ok=started?await askConfirm("End this module?","It will end yesterday. Its past days and all attendance records stay. Future days from today are removed.","End module",true)
+    :await askConfirm("Delete these module dates?","It hasn't started yet, so nothing recorded is affected.","Delete",true);
+  if (ok){ const r=await run("apiDeleteBlock",[S.token,id]); if (r) toast(r.ended?`Module ended on ${dateLabel(r.ended,{day:"numeric",month:"short"})}. Past days kept.`:"Deleted.","ok"); }
+}
+function timetableView(){
+  const today=sgt().date; if (!S.ttMonth) S.ttMonth=today.slice(0,7);
+  const month=S.ttMonth, tt=ttNow(), [y,m]=month.split("-").map(Number), lead=(new Date(Date.UTC(y,m-1,1)).getUTCDay()+6)%7, dim=new Date(Date.UTC(y,m,0)).getUTCDate();
+  const cells=[]; for (let i=0;i<lead;i++) cells.push(`<div class="cal-c empty"></div>`);
+  for (let d=1; d<=dim; d++){
+    const ds=`${month}-${String(d).padStart(2,"0")}`, cls=isClassDayC(ds,tt), b=cls?modLabelFor(ds,tt):null, r=S.records.find(x=>x.date===ds);
+    const k=r?(r.status==="Approved"?r.mark:r.status):"", mark=r?({Present:"P",Late:"L",Absent:"A",Excused:"E",Pending:"?",Declined:"X"}[k]||""):"";
+    cells.push(`<div class="cal-c ${cls?(r?"k-"+k.toLowerCase():""):"off"} ${ds===today?"today":""}"><span class="cal-d">${d}</span>${cls?`${b?`<span class="cal-mod" title="${esc(b.name)}">${esc(b.code)}</span><span class="cal-s">${esc(fmt12(b.start+":00"))}</span>`:`<span class="cal-s">Class</span>`}${mark?`<span class="cal-big">${mark}</span>`:""}`:`<span class="cal-s">No class</span>`}</div>`);
+  }
+  const prev=new Date(Date.UTC(y,m-2,1)).toISOString().slice(0,7), next=new Date(Date.UTC(y,m,1)).toISOString().slice(0,7);
+  const ti=dayInfoC(today), nx=nextClassDay(today,tt), ni=nx?dayInfoC(nx):null;
+  return `<div class="stack"><div><div class="label">Your classes</div><h1>Calendar</h1></div>
+    ${monthModulesCard(month)}
+    <div class="cal-wrap"><section class="panel">
+      <div class="cal-nav"><button class="btn small" data-act="tt-month" data-id="${prev}" aria-label="Previous month">‹</button><h2>${monthLabel(month)}</h2><button class="btn small" data-act="tt-month" data-id="${next}" aria-label="Next month">›</button></div>
+      <div class="cal-grid">${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(w=>`<div class="cal-w">${w}</div>`).join("")}${cells.join("")}</div>
+      <div class="tl-legend" style="margin-top:10px"><span><b style="background:#DFF2E7"></b>P Present</span><span><b style="background:#FCEBCB"></b>L Late</span><span><b style="background:#F8DCDF"></b>A Absent</span><span><b style="background:#EEE8F7"></b>E Excused</span><span><b style="background:#EEF0F4"></b>No class</span></div>
+    </section>
+    <section class="panel stack"><h2>${isClassDayC(today,tt)?"Today":"Next class"}</h2>
+      ${isClassDayC(today,tt)?`<div class="note"><b>${esc(ti.moduleName||"Class")}</b><br>${esc(timeRange(ti.classStart,ti.classEnd))}${ti.lecturerName?`<br>${esc(ti.lecturerName)}`:""}<br><span class="hint">Submit attendance ${esc(fmt12(ti.open+":00"))} – ${esc(fmt12(ti.close+":00"))}</span></div>`
+        :ni?`<div class="note"><b>${dateLabel(nx,{weekday:"long",day:"numeric",month:"long"})}</b><br>${esc(ni.moduleName||"Class")} · ${esc(timeRange(ni.classStart,ni.classEnd))}</div>`:`<p class="muted">No upcoming classes in the timetable yet.</p>`}
+      <h2 style="margin-top:6px">Modules</h2>${blocksList(false)}</section></div></div>`;
+}
+function timetableReadOnly(){
+  return `<section class="panel stack"><h2>Module timetable</h2><p class="hint">Only the admin can change the timetable. Ask the admin if a date or time is wrong.</p>${blocksList(false)}</section>`;
+}
+function timetablePanel(){
+  const tt=ttNow(), wd=[["1","Mon"],["2","Tue"],["3","Wed"],["4","Thu"],["5","Fri"],["6","Sat"],["7","Sun"]];
+  const changed=Object.keys(tt.overrides||{}).sort(), hasBlocks=(tt.blocks||[]).length>0;
+  return `<div class="stack" style="gap:18px"><section class="panel stack"><div class="panel-h" style="margin:0"><h2>Module timetable</h2><button class="btn primary small" type="button" data-act="add-block">Add module dates</button></div>
+    <p class="hint">Each entry sets the module, lecturer, dates, weekdays and class time. Everyone sees this in Calendar. Add next month's module any time.</p>
+    ${blocksList(true)}</section>
+  <form class="panel stack" id="tt-form"><h2>Counting rules</h2>
+    <p class="hint">These rules only change <b>today and future days</b>. Past days and any day with attendance records are locked and always stay in the app and the Google Sheet. To plan next month, use <b>Add module dates</b> above (don't move the start date).</p>
+    <div class="fields"><label class="field"><span>Start date (first class day counted)</span><input class="input" type="date" id="tt-start" value="${esc(tt.start||"")}"></label>
+    <label class="field"><span>End date (optional)</span><input class="input" type="date" id="tt-end" value="${esc(tt.end||"")}"></label></div>
+    <div class="field" ${hasBlocks?'hidden':''}><span>Class weekdays (used only when no module dates are set)</span><div class="wdays">${wd.map(([n,l])=>`<label><input type="checkbox" id="tt-d${n}" value="${n}" ${(tt.days||[]).includes(+n)?"checked":""}><span>${l}</span></label>`).join("")}</div></div>
+    ${changed.length?`<div class="field"><span>Changed days</span><div class="btns">${changed.map(d=>`<span class="tag">${dateLabel(d,{day:"numeric",month:"short"})}: ${tt.overrides[d]==="off"?"no class":"class"} <button type="button" class="linkbtn" data-act="clear-ov" data-id="${d}" aria-label="Undo">undo</button></span>`).join("")}</div></div>`:""}
+    <button class="btn primary" type="submit">Save</button></form></div>`;
+}
+function ttPayload(over){
+  const tt=ttNow(); return Object.assign({startDate:tt.start||"", endDate:tt.end||"", classDays:tt.days||[1,2,3,4,5], dayOverrides:Object.assign({},tt.overrides||{})}, over||{});
+}
+async function saveTimetable(){
+  const days=["1","2","3","4","5","6","7"].filter(n=>$("#tt-d"+n).checked).map(Number);
+  await run("apiSaveTimetable",[S.token,ttPayload({startDate:$("#tt-start").value, endDate:$("#tt-end").value, classDays:days})],"Timetable saved.");
+}
+async function toggleDay(ds){
+  const tt=ttNow(), p=ttPayload(), cls=isClassDayC(ds,tt);
+  const base=isClassDayC(ds,Object.assign({},tt,{overrides:{}}));
+  if (base===!cls) delete p.dayOverrides[ds]; else p.dayOverrides[ds]=cls?"off":"on";
+  await run("apiSaveTimetable",[S.token,p], cls?`${dateLabel(ds,{day:"numeric",month:"short"})} marked as no class.`:`${dateLabel(ds,{day:"numeric",month:"short"})} marked as a class day.`);
+}
+async function clearOverride(ds){ const p=ttPayload(); delete p.dayOverrides[ds]; await run("apiSaveTimetable",[S.token,p],"Change undone."); }
+
+/* ----- absence alerts (student) ----- */
+function absentThisMonth(){ const m=sgt().month; return S.records.filter(r=>r.month===m && r.status==="Approved" && r.mark==="Absent").length; }
+function absenceText(n){
+  if (n>=4) return {lvl:3, title:`You have been absent ${n} days this month`, body:"You must make sure to meet with the Admin for academic purposes."};
+  if (n>=3) return {lvl:2, title:"You have been absent 3 days this month", body:"You must make sure to meet with the Admin."};
+  if (n>=2) return {lvl:1, title:"You have been absent 2 days this month", body:"Please attend your classes. If you were sick, send your MC under MC / Leave."};
+  return null;
+}
+function absenceBanner(){ const a=absenceText(absentThisMonth()); return a?`<div class="alertbox lvl${a.lvl}" role="alert"><b>${esc(a.title)}</b><span>${esc(a.body)}</span></div>`:""; }
+function absenceAlert(){
+  if (!S.me || S.me.role!=="Student") return;
+  const n=absentThisMonth(), a=absenceText(n); if (!a) return;
+  const key=`absalert:${S.me.key}:${sgt().month}:${n}`;
+  if (S.shownAlert===key || !$("#modal").hidden) return;
+  S.shownAlert=key;
+  openModal(`<div class="alertbox lvl${a.lvl}" style="border:0;padding:0;background:none"><div class="label">Attendance reminder</div><h2>${esc(a.title)}</h2></div>
+    <p class="muted" style="font-size:1rem">${esc(a.body)}</p>
+    <div class="sheet-f"><button class="btn" data-act="tab-leave">Send MC</button><button class="btn primary" data-act="close-modal">I understand</button></div>`);
+}
+
+/* ----- MC / leave ----- */
+function leaveSeen(x){ try { return (JSON.parse(store.get("lvseen:"+S.me.key)||"{}"))[x.id]===x.status; } catch(e){ return false; } }
+function markLeaveSeen(){ try { const m={}; S.leave.forEach(x=>{ if (x.status!=="Pending") m[x.id]=x.status; }); store.set("lvseen:"+S.me.key, JSON.stringify(m)); } catch(e){} }
+const leaveDates = x => x.fromDate===x.toDate ? dateLabel(x.fromDate,{weekday:"short",day:"numeric",month:"short"}) : `${dateLabel(x.fromDate,{day:"numeric",month:"short"})} – ${dateLabel(x.toDate,{day:"numeric",month:"short",year:"numeric"})}`;
+function studentLeave(){
+  const today=sgt().date, mine=S.leave;
+  setTimeout(markLeaveSeen, 0);
+  return `<div class="grid2"><form class="panel stack" id="leave-form"><div><h2>Send MC or leave note</h2><p class="hint">Your lecturer and the admin see it in the app. If it's accepted, those days count as <b>Excused</b>, not Absent.</p></div>
+      <div class="fields"><label class="field"><span>From</span><input class="input" type="date" id="lv-from" value="${esc(S.drafts.lvFrom||today)}"></label><label class="field"><span>To</span><input class="input" type="date" id="lv-to" value="${esc(S.drafts.lvTo||S.drafts.lvFrom||today)}"></label></div>
+      <label class="field"><span>Message</span><textarea class="input" id="lv-msg" maxlength="500" rows="3" placeholder="e.g. I had a fever. MC from Raffles Medical attached.">${esc(S.drafts.lvMsg||"")}</textarea></label>
+      <div class="field"><span>Photo or PDF of your MC</span>
+        <label class="filepick"><input type="file" id="lv-file" accept="image/*,application/pdf"><span data-filelabel>${S.lvFile?esc(S.lvFile.label):"Take a photo or choose a file"}</span></label>
+        ${S.lvFile&&S.lvFile.preview?`<img class="lv-prev" src="${S.lvFile.preview}" alt="MC preview">`:""}
+        <span class="hint">Photos are made smaller automatically. PDF up to 5 MB.</span></div>
+      <button class="btn primary" type="submit" ${S.busy?"disabled":""}>${S.busy?"Sending…":"Send to lecturer"}</button></form>
+    <section class="panel stack"><h2>My MC / leave</h2>
+      ${mine.length?`<div class="list">${mine.map(x=>`<div class="li"><div><b>${esc(leaveDates(x))}</b><div class="muted" style="font-size:.86rem;overflow-wrap:anywhere">${esc(x.message||"(no message)")}${x.hasFile?" · MC attached":""}</div>${x.reply?`<div class="note" style="margin-top:6px"><b>${esc(x.reviewedBy)}:</b> ${esc(x.reply)}</div>`:""}</div><div class="btns">${chip(x.status)}${x.hasFile?`<button class="btn small" data-act="view-mc" data-id="${esc(x.id)}">View</button>`:""}</div></div>`).join("")}</div>`
+        :`<div class="empty"><b>Nothing sent yet</b><span>When you send an MC, its status shows here.</span></div>`}
+    </section></div>`;
+}
+function readFileForUpload(file){
+  return new Promise((resolve,reject)=>{
+    if (!file) return resolve(null);
+    if (file.type==="application/pdf"){
+      if (file.size>5*1024*1024) return reject(new Error("The PDF is too big (max 5 MB)."));
+      const fr=new FileReader(); fr.onload=()=>resolve({mime:"application/pdf", data:String(fr.result).split(",")[1], label:file.name, preview:""}); fr.onerror=()=>reject(new Error("Couldn't read the file.")); fr.readAsDataURL(file); return;
+    }
+    if (!/^image\//.test(file.type)) return reject(new Error("Choose a photo or a PDF."));
+    const url=URL.createObjectURL(file), img=new Image();
+    img.onload=()=>{ const max=1600, k=Math.min(1, max/Math.max(img.width,img.height)); const c=document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); const du=c.toDataURL("image/jpeg",0.8);
+      resolve({mime:"image/jpeg", data:du.split(",")[1], label:file.name+" ("+Math.round(du.length*0.75/1024)+" KB)", preview:du}); };
+    img.onerror=()=>{ URL.revokeObjectURL(url); reject(new Error("Couldn't open that photo. Try a JPG or PNG.")); };
+    img.src=url;
+  });
+}
+async function submitLeave(){
+  if (S.busy) return;
+  const p={fromDate:$("#lv-from").value, toDate:$("#lv-to").value||$("#lv-from").value, message:$("#lv-msg").value.trim()};
+  if (S.lvFile){ p.mime=S.lvFile.mime; p.data=S.lvFile.data; }
+  S.busy=true; render();
+  try { await api("apiSubmitLeave", S.token, p); S.lvFile=null; S.drafts.lvMsg=""; S.drafts.lvFrom=""; S.drafts.lvTo=""; toast("Sent. Your lecturer will review it.","ok"); }
+  catch(e){ if (e.message!=="Your session ended.") toast(e.message,"bad"); }
+  S.busy=false; await refresh(true);
+}
+function staffLeave(){
+  const pend=S.leave.filter(x=>x.status==="Pending"), done=S.leave.filter(x=>x.status!=="Pending").slice(0,40), ed=canApprove();
+  return `<div class="stack"><div class="panel-h"><div><div class="label">Medical certificates and leave notes</div><h1>MC / Leave</h1></div></div>
+    ${!ed?`<div class="note">You can view MCs. Accepting or rejecting needs permission from ${esc(accByRole("Lecturer").displayName||"the lecturer")}.</div>`:""}
+    ${pend.length?`<div class="pend-list">${pend.map(x=>`<article class="pend" style="border-left-color:#7A5AC8">
+      <div class="pend-h"><div><b>${esc(x.name)}</b><div class="muted" style="font-size:.86rem">${esc(leaveDates(x))}</div></div>${x.hasFile?chip("Excused","MC attached"):""}</div>
+      ${x.message?`<div class="note">${esc(x.message)}</div>`:""}
+      <div class="hint">Sent ${stampLabel(x.at)}</div>
+      ${x.hasFile?`<button class="btn" type="button" data-act="view-mc" data-id="${esc(x.id)}">View MC</button>`:""}
+      ${ed?`<input class="input" id="lvr-${esc(x.id)}" placeholder="Reply to the student (optional)" maxlength="300" value="${esc(S.drafts["lvr:"+x.id]||"")}" data-lvr="${esc(x.id)}">
+      <div class="btns"><button class="btn danger" data-act="reject-mc" data-id="${esc(x.id)}">Reject</button><button class="btn ok" style="flex:1" data-act="accept-mc" data-id="${esc(x.id)}">Accept · mark Excused</button></div>`:""}
+    </article>`).join("")}</div>`
+    :`<div class="rows"><div class="empty"><b>No MCs waiting</b><span>When a student sends an MC or leave note, it appears here.</span></div></div>`}
+    ${done.length?`<div class="panel"><div class="panel-h"><h2>Reviewed</h2></div><div class="list">${done.map(x=>`<div class="li"><div><b>${esc(x.name)}</b> <span class="faint">${esc(leaveDates(x))}</span><div class="muted" style="font-size:.86rem;overflow-wrap:anywhere">${esc(x.message||"")}${x.reply?` · Reply: ${esc(x.reply)}`:""}</div></div><div class="btns">${chip(x.status)} <span class="faint" style="font-size:.82rem">${esc(x.reviewedBy)}</span>${x.hasFile?`<button class="btn small" data-act="view-mc" data-id="${esc(x.id)}">View</button>`:""}</div></div>`).join("")}</div></div>`:""}
+  </div>`;
+}
+async function viewMc(id){
+  openModal(`<h2>Medical certificate</h2><p class="muted">Loading…</p>`);
+  try {
+    const f=await api("apiLeaveFile", S.token, id), x=S.leave.find(v=>v.id===id)||{};
+    const bin=atob(f.data), u=new Uint8Array(bin.length); for (let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i);
+    const url=URL.createObjectURL(new Blob([u],{type:f.mime}));
+    openModal(`<div><div class="label">${esc(x.name||"")} · ${esc(x.fromDate?leaveDates(x):"")}</div><h2>Medical certificate</h2></div>
+      ${/^image\//.test(f.mime)?`<img class="mc-img" src="data:${f.mime};base64,${f.data}" alt="Medical certificate">`:`<p class="muted">This MC is a PDF.</p>`}
+      <a class="btn" href="${url}" target="_blank" rel="noopener" download="${esc(f.name||"mc")}">Open full size</a>
+      ${x.message?`<div class="note">${esc(x.message)}</div>`:""}
+      <div class="sheet-f"><button class="btn primary" data-act="close-modal">Close</button></div>`);
+  } catch(e){ closeModal(); toast(e.message,"bad"); }
+}
+async function reviewMc(id, decision, btn){
+  btn.disabled=true;
+  const r=await run("apiReviewLeave",[S.token,id,decision,(S.drafts["lvr:"+id]||"").trim()], decision==="Accepted"?"MC accepted. Those days are now Excused.":"MC rejected.");
+  if (r) delete S.drafts["lvr:"+id]; else btn.disabled=false;
+}
+
+function studentToday(){
+  const now=sgt(), st=S.settings, mods=S.modules.filter(m=>m.active);
+  const info=dayInfoC(now.date);
+  if (info.moduleId) S.todayModule=info.moduleId;
+  if (!S.todayModule || !modById(S.todayModule)) S.todayModule=mods[0]?mods[0].id:"";
+  const existing=S.records.find(r=>r.date===now.date)||null;
+  const greet=now.h<12?"Good morning":now.h<18?"Good afternoon":"Good evening";
+  let form;
+  const tt=ttNow(), classToday=isClassDayC(now.date,tt), nxt=nextClassDay(now.date,tt);
+  if (!mods.length) form=`<div class="empty"><b>No modules open</b><span>Ask the admin to add your module.</span></div>`;
+  else if (!classToday && !existing) form=`<div class="done"><div class="label">Attendance closed</div><h3>${tt.start&&now.date<tt.start?"Classes haven't started yet":"No class today"}</h3>
+      <p class="muted">${tt.start&&now.date<tt.start?`Attendance starts on <b>${dateLabel(tt.start,{weekday:"long",day:"numeric",month:"long"})}</b>.`:nxt?`Next class: <b>${dateLabel(nxt,{weekday:"long",day:"numeric",month:"long"})}</b>.`:"Check the timetable with your lecturer."}</p></div>`;
+  else if (existing) form=`<div class="done"><div class="label">${existing.source==="Auto"?"Marked automatically":existing.mark==="Excused"?"Approved leave":"Already submitted today"}</div><h3>${esc(existing.moduleName)}</h3><div class="btns">${existing.source==="Auto"||existing.mark==="Excused"?"":statusChip(existing)} ${markChip(existing)}</div>
+      <p class="muted">${existing.source==="Auto"?`No attendance was submitted by ${fmt12(closeAt()+":00")}, so today is marked <b>Absent</b>. Only your lecturer can change it. Message them below or send your MC under <b>MC / Leave</b>.`
+        :existing.mark==="Excused"?"Your MC / leave was accepted for today. You don't need to submit attendance.":`Recorded at <span class="mono">${fmt12(existing.submittedTime,true)}</span> on ${dateLabel(existing.date)} via ${esc(existing.source)}.`}</p>
+      ${existing.status==="Pending"?`<p class="hint">Waiting for your lecturer. This page updates by itself.</p>`:""}</div>
+      <div class="stack" style="margin-top:14px"><div class="label">Messages with your lecturer</div>${(markSeen(existing),"")}${thread(existing)}${replyBox(existing)}</div>`;
+  else if (windowState(now.time)==="before") form=`<div class="done"><div class="label">Not open yet</div><h3>Attendance opens at ${fmt12(openAt()+":00")}</h3><p class="muted">You can submit from ${fmt12(openAt()+":00")} to ${fmt12(closeAt()+":00")}. This page opens the form by itself.</p></div>`;
+  else if (windowState(now.time)==="after") form=`<div class="done"><div class="label">Closed</div><h3>Attendance closed at ${fmt12(closeAt()+":00")}</h3><p class="muted">You're marked <b>Absent</b> today. If you have a reason, talk to your lecturer or send your MC under <b>MC / Leave</b>.</p></div>`;
+  else form=`<form class="stack" id="att-form">
+      <div class="fields"><label class="field"><span>Student</span><input class="input" value="${esc(S.me.displayName)}" readonly></label><label class="field"><span>Month</span><input class="input" value="${esc(monthLabel(now.month))}" readonly></label></div>
+      ${info.moduleId?`<label class="field"><span>Module (from the timetable)</span><input class="input" value="${esc(info.moduleName)} · ${esc(timeRange(info.classStart,info.classEnd))}" readonly><input type="hidden" id="f-module" value="${esc(info.moduleId)}"></label>`
+        :`<label class="field"><span>Module name</span><select class="input" id="f-module">${mods.map(m=>`<option value="${esc(m.id)}" ${m.id===S.todayModule?"selected":""}>${esc(m.name)}</option>`).join("")}</select></label>`}
+      <div class="fields"><label class="field"><span>Date</span><input class="input" value="${esc(dateLabel(now.date))}" readonly></label><label class="field"><span>Time (recorded on submit)</span><input class="input mono" readonly data-clockinput></label></div>
+      <div class="predict" data-predict></div>
+      <div class="msgbox" data-msgbox>
+        <label class="field"><span data-msglabel>Message to ${esc(lecturerOfModule(S.todayModule))} (optional)</span><textarea class="input" id="f-note" maxlength="500" rows="3" placeholder="If you're late or need to explain something, write it here.">${esc(S.drafts.studentNote||"")}</textarea></label>
+        <div class="quick">${["Bus / MRT delay","Medical appointment","Feeling unwell","Family matter","Work matter"].map(q=>`<button type="button" class="qchip" data-act="quick-reason" data-id="${esc(q)}">${esc(q)}</button>`).join("")}</div>
+      </div>
+      <button class="btn primary" type="submit" ${S.busy?"disabled":""}>${S.busy?"Submitting…":"Submit attendance"}</button>
+      <p class="hint" data-closes></p>
+      ${st.formUrl?`<p class="hint">Backup: <a href="${esc(st.formUrl)}" target="_blank" rel="noopener">open the class Google Form</a> if this page won't load.</p>`:""}
+    </form>`;
+  return `<div class="grid2"><section class="panel stack"><div><div class="label">${greet}</div><h1>${esc(S.me.displayName)}</h1></div>
+      <div><div class="bigclock" data-clock>--:--</div><div class="muted" data-today>—</div></div><div><div class="label">Class window</div>${timeline()}</div>
+      ${info.moduleId&&classToday?`<div class="note"><b>Today:</b> ${esc(info.moduleName)}<br>${esc(timeRange(info.classStart,info.classEnd))}${info.lecturerName?` · ${esc(info.lecturerName)}`:""}</div>`:""}
+      <p class="hint">Submit between ${fmt12(openAt()+":00")} and ${fmt12(closeAt()+":00")}. Up to ${fmt12(untilAt()+":00")} is Present, after that Late. If you don't submit by ${fmt12(closeAt()+":00")}, you're marked Absent automatically.</p>
+      ${absenceBanner()}</section>
+    <section class="panel"><div class="panel-h"><h2>${classToday||existing?"Submit attendance":"Attendance"}</h2></div>${form}</section></div>`;
+}
+function lecturerOfModule(id){ const i=dayInfoC(sgt().date); if (i.lecturerName) return i.lecturerName; const m=modById(id); return (m&&m.lecturerName) || "your lecturer"; }
+async function submitAttendance(){
+  if (S.busy) return;
+  const modId=$("#f-module").value, note=($("#f-note").value||"").trim();
+  S.busy=true; render();
+  try { const r=await api("apiSubmit", S.token, modId, note); S.drafts.studentNote=""; toast(`Submitted at ${fmt12(r.submittedTime,true)} as ${r.autoMark}. Waiting for approval.`,"ok"); }
+  catch(e){ if (e.message!=="Your session ended.") toast(e.message,"bad"); }
+  S.busy=false; await refresh(true);
+}
+function studentHistory(){
+  const all=recList(), months=[...new Set([sgt().month, ...all.map(r=>r.month)])].sort().reverse();
+  if (!S.histMonth) S.histMonth=months[0];
+  const list=all.filter(r=>r.month===S.histMonth);
+  return `<div class="stack"><div class="panel-h"><h1>My attendance</h1><label class="field" style="min-width:200px"><span>Month</span><select class="input" id="h-month" data-in="histMonth">${months.map(m=>`<option value="${m}" ${m===S.histMonth?"selected":""}>${monthLabel(m)}</option>`).join("")}</select></label></div>
+    ${stats(list)}
+    ${list.length?`<div class="list">${list.map(r=>`<div class="li"><div><b>${dateLabel(r.date)}</b><div class="muted" style="font-size:.88rem">${esc(r.moduleName)} · <span class="mono">${fmt12(r.submittedTime,true)}</span></div>${msgsOf(r).length?`<div class="muted" style="font-size:.86rem;overflow-wrap:anywhere">“${esc(msgsOf(r)[msgsOf(r).length-1].text.slice(0,90))}”</div>`:""}</div><div class="btns">${markChip(r)} ${statusChip(r)} ${msgTag(r)}<button class="btn small" data-act="open-thread" data-id="${esc(r.id)}">${msgsOf(r).length?"Messages":"Message lecturer"}</button></div></div>`).join("")}</div>`
+    :`<div class="rows"><div class="empty"><b>No records in ${monthLabel(S.histMonth)}</b><span>Your submissions show here with their approval status.</span></div></div>`}</div>`;
+}
+
+/* ----- account ----- */
+function passwordPanel(){
+  return `<form class="panel stack" id="pw-form"><h2>Change password</h2>
+    <label class="field"><span>Current password</span><input class="input" type="password" id="pw-cur" autocomplete="current-password"></label>
+    <label class="field"><span>New password (at least 6 characters)</span><input class="input" type="password" id="pw-new" autocomplete="new-password"></label>
+    <label class="field"><span>Repeat new password</span><input class="input" type="password" id="pw-new2" autocomplete="new-password"></label>
+    <button class="btn primary" type="submit">Update password</button></form>`;
+}
+function accountView(){
+  return `<div class="grid2"><section class="panel stack"><h2>My account</h2>
+    <div class="fields"><label class="field"><span>Username</span><input class="input" value="${esc(S.me.username)}" readonly></label><label class="field"><span>Role</span><input class="input" value="${esc(S.me.role)}" readonly></label></div>
+    ${S.settings.formUrl?`<div class="field"><span>Class Google Form (backup)</span>${copyField("form-url",S.settings.formUrl)}</div>`:""}
+  </section>${passwordPanel()}</div>`;
+}
+async function changePassword(){
+  const cur=$("#pw-cur").value, n1=$("#pw-new").value, n2=$("#pw-new2").value;
+  if (n1.length<6){ toast("New password needs at least 6 characters.","bad"); return; }
+  if (n1!==n2){ toast("The new passwords don't match.","bad"); return; }
+  if (await run("apiChangePassword",[S.token,cur,n1],"Password updated.")) ["#pw-cur","#pw-new","#pw-new2"].forEach(s=>{ const e=$(s); if (e) e.value=""; });
+}
+
+/* ----- lecturer ----- */
+function pendingCards(editable){
+  const list=pendingList();
+  if (!list.length) return `<div class="rows"><div class="empty"><b>No pending attendance</b><span>New submissions from the app and the Google Form appear here automatically.</span></div></div>`;
+  return `<div class="pend-list">${list.map(r=>{ const d=S.drafts[r.id]||{}, mk=d.mark||r.autoMark||"Present";
+    return `<article class="pend"><div class="pend-h"><div><b>${esc(r.studentName)}</b><div class="muted" style="font-size:.86rem">${esc(r.moduleName)} · ${esc(r.source)}</div></div>${chip(r.autoMark,"Auto: "+r.autoMark)}</div>
+      <div class="mono" style="font-size:.9rem">${dateLabel(r.date)} · ${fmt12(r.submittedTime,true)}</div>
+      ${msgsOf(r).length?`<div class="note"><b>${esc(msgsOf(r)[msgsOf(r).length-1].role==="Student"?"Message":"Last message")}:</b> ${esc(msgsOf(r)[msgsOf(r).length-1].text)} ${msgsOf(r).length>1?`<span class="faint">(${msgsOf(r).length})</span>`:""}</div>`:""}
+      <div><button type="button" class="linkbtn" data-act="open-thread" data-id="${esc(r.id)}">${msgsOf(r).length?"Reply to message":"Message student"}</button> ${isUnread(r)?chip("Declined","New"):""}</div>
+      ${editable?`<div class="seg" role="radiogroup" aria-label="Mark">${["Present","Late"].map(m=>`<label><input type="radio" name="mk-${esc(r.id)}" id="mk-${esc(r.id)}-${m}" value="${m}" data-draft="${esc(r.id)}" ${mk===m?"checked":""}><span class="m-${m.toLowerCase()}">${m}</span></label>`).join("")}</div>
+      <input class="input" id="nt-${esc(r.id)}" placeholder="Reply with the decision (optional, the student sees it)" value="${esc(d.note||"")}" data-draftnote="${esc(r.id)}" maxlength="300">
+      <div class="btns"><button class="btn danger" data-act="decline" data-id="${esc(r.id)}">Decline</button><button class="btn ok" style="flex:1" data-act="approve" data-id="${esc(r.id)}">Approve as ${mk}</button></div>`
+      :`<p class="hint">Waiting for ${esc(accByRole("Lecturer").displayName||"the lecturer")} to approve.</p>`}</article>`; }).join("")}</div>`;
+}
+function lecturerPending(){
+  const today=sgt().date;
+  return `<div class="stack"><div class="panel-h"><div><div class="label">Live · ${dateLabel(today,{weekday:"long",day:"numeric",month:"long"})}</div><h1>Pending approvals</h1></div><div class="bigclock" style="font-size:1.6rem" data-clock>--:--</div></div>${stats(S.records.filter(r=>r.date===today))}${pendingCards(true)}</div>`;
+}
+async function review(id, decision, btn){
+  const r=S.records.find(x=>x.id===id); if (!r) return;
+  const d=S.drafts[id]||{}, mark=d.mark||r.autoMark||"Present";
+  if (btn) btn.disabled=true;
+  if (await run("apiReview",[S.token,id,decision,mark,(d.note||"").trim()], decision==="Approved"?`${r.studentName}: approved as ${mark}.`:`${r.studentName}: declined.`)) delete S.drafts[id];
+}
+function lecturerSettings(){
+  const st=S.settings, adm=accByRole("Admin").displayName||"the admin";
+  return `<div class="grid2"><section class="panel stack"><h2>Admin permission</h2>
+    <label class="switch"><input type="checkbox" id="perm-admin" ${st.adminCanApprove?"checked":""}><div><b>Allow ${esc(adm)} (Admin) to approve and edit attendance</b>
+    <p class="hint">${st.adminCanApprove?`On since ${stampLabel(st.adminPermissionAt)}. Turn off to take approval back.`:"Off. The admin can view and export records but can't approve, decline or change marks."}</p></div></label>
+    <div class="note">Class rules: present until <b>${fmt12(st.presentUntil+":00")}</b>, late after. The admin sets these times.</div></section>${passwordPanel()}</div>`;
+}
+
+/* ----- records ----- */
+const filteredRecords=()=>filterRecords(recList(), S.filters);
+function recordsView(){
+  const f=S.filters, months=[...new Set([sgt().month, ...S.records.map(r=>r.month)])].sort().reverse(), list=filteredRecords();
+  const statuses=[["","All"],["Pending","Pending"],["Approved","Approved (any)"],["Present","Approved · Present"],["Late","Approved · Late"],["Absent","Approved · Absent"],["Excused","Approved · Excused (MC)"],["Declined","Declined"]];
+  return `<div class="stack"><div class="panel-h"><h1>${S.me.role==="Admin"?"Attendance records":"All records"}</h1>
+      <div class="btns">${canApprove()?`<button class="btn" data-act="add-record">Add record</button>`:""}${S.me.role==="Admin"&&mode()!=="demo"?`<button class="btn" data-act="export-sheet">Export to new sheet tab</button>`:""}<button class="btn primary" data-act="export">Export CSV (${list.length})</button></div></div>
+    ${S.me.role==="Admin"&&!canApprove()?`<div class="note">View and export only. Approving and editing need permission from ${esc(accByRole("Lecturer").displayName||"the lecturer")}.</div>`:""}
+    <div class="filters">
+      <label class="field"><span>Month</span><select class="input" id="fl-month" data-filter="month"><option value="">All months</option>${months.map(m=>`<option value="${m}" ${m===f.month?"selected":""}>${monthLabel(m)}</option>`).join("")}</select></label>
+      <label class="field"><span>Module</span><select class="input" id="fl-module" data-filter="module"><option value="">All modules</option>${S.modules.map(m=>`<option value="${esc(m.id)}" ${m.id===f.module?"selected":""}>${esc(m.name)}</option>`).join("")}</select></label>
+      <label class="field"><span>Status</span><select class="input" id="fl-status" data-filter="status">${statuses.map(([v,l])=>`<option value="${v}" ${v===f.status?"selected":""}>${l}</option>`).join("")}</select></label>
+      <label class="field"><span>Search</span><input class="input" id="fl-q" data-filter="q" value="${esc(f.q)}" placeholder="Student or note"></label></div>
+    ${stats(list)}
+    <div class="rows"><div class="rec head"><span>Date</span><span>Student · module</span><span>Time</span><span>Mark</span><span>Status</span><span></span></div>
+    ${list.length?list.map(r=>`<div class="rec"><span class="c-d"><span class="k">Date</span>${dateLabel(r.date,{weekday:"short",day:"numeric",month:"short"})}</span>
+      <div class="who"><b>${esc(r.studentName)}</b><span>${esc(r.moduleName)}${msgsOf(r).length?" · "+msgsOf(r).length+" message"+(msgsOf(r).length>1?"s":""):""}${isUnread(r)?' · <b style="color:var(--red)">new</b>':""}</span></div><span class="c-t mono"><span class="k">Time</span>${fmt12(r.submittedTime)}</span>
+      <span class="c-m">${markChip(r)}</span><span class="c-s">${statusChip(r)}</span><span class="act"><button class="btn small" data-act="open-rec" data-id="${esc(r.id)}">${canApprove()?"Edit":"View"}</button></span></div>`).join("")
+    :`<div class="empty"><b>No records match</b><span>Change the filters, or wait for students to submit.</span></div>`}</div></div>`;
+}
+function openRecord(id){
+  const r=S.records.find(x=>x.id===id); if (!r) return;
+  const ed=canApprove(), adm=S.me.role==="Admin", opt=(arr,cur)=>arr.map(s=>`<option value="${s}" ${cur===s?"selected":""}>${s}</option>`).join("");
+  openModal(`<div><div class="label">${esc(r.moduleName)}</div><h2>${esc(r.studentName)}</h2><p class="muted">${dateLabel(r.date,{weekday:"long",day:"numeric",month:"long",year:"numeric"})} · <span class="mono">${fmt12(r.submittedTime,true)}</span> · auto ${esc(r.autoMark)} · ${esc(r.source)}</p></div>
+    <div class="stack" style="gap:8px"><div class="label">Messages</div>${(markSeen(r),"")}${thread(r)}${replyBox(r)}</div>
+    ${ed?`<div class="fields"><label class="field"><span>Status</span><select class="input" id="rm-status">${opt(["Pending","Approved","Declined"],r.status)}</select></label><label class="field"><span>Mark</span><select class="input" id="rm-mark">${opt(["Present","Late","Absent","Excused"],r.mark)}</select></label></div>
+      <label class="field"><span>Decision note (also sent as a message)</span><textarea class="input" id="rm-note" maxlength="300">${esc(r.lecturerNote)}</textarea></label>`
+    :`<div class="btns" id="rm-view">${statusChip(r)} ${markChip(r)}</div>`}
+    <div><div class="label" style="margin-bottom:6px">History</div><div class="hist">${(r.history||[]).slice().reverse().map(h=>`<div><b>${esc(h.action)}</b> · ${esc(h.byName)} <span class="faint">${stampLabel(h.at)}</span>${h.detail?`<br><span class="muted">${esc(h.detail)}</span>`:""}</div>`).join("")||'<span class="faint">No history</span>'}</div></div>
+    <div class="sheet-f">${adm?`<button class="btn danger" data-act="del-rec" data-id="${esc(id)}" style="margin-right:auto">Delete</button>`:""}<button class="btn" data-act="close-modal">${ed?"Cancel":"Close"}</button>${ed?`<button class="btn primary" data-act="save-rec" data-id="${esc(id)}">Save changes</button>`:""}</div>`);
+}
+async function saveRecord(id){ if (await run("apiEditRecord",[S.token,id,$("#rm-status").value,$("#rm-mark").value,$("#rm-note").value.trim()],"Record updated.")) closeModal(); }
+async function deleteRecord(id){
+  const r=S.records.find(x=>x.id===id); if (!r) return;
+  closeModal();
+  if (await askConfirm("Delete this record?",`${r.studentName} · ${dateLabel(r.date)} · ${r.moduleName}. This can't be undone. Export a CSV first if you need a copy.`,"Delete record",true)) await run("apiDeleteRecord",[S.token,id],"Record deleted.");
+}
+function openAddRecord(){
+  const studs=S.accounts.filter(a=>a.role==="Student"&&a.active), mods=S.modules.filter(m=>m.active);
+  if (!studs.length||!mods.length){ toast("Add at least one active student and module first.","bad"); return; }
+  openModal(`<h2>Add attendance record</h2><p class="muted">For a student who couldn't submit. It's saved as approved.</p>
+    <label class="field"><span>Student</span><select class="input" id="ar-stu">${studs.map(s=>`<option value="${esc(s.key)}">${esc(s.displayName)}</option>`).join("")}</select></label>
+    <label class="field"><span>Module</span><select class="input" id="ar-mod">${mods.map(m=>`<option value="${esc(m.id)}">${esc(m.name)}</option>`).join("")}</select></label>
+    <div class="fields"><label class="field"><span>Date</span><input class="input" type="date" id="ar-date" value="${sgt().date}"></label><label class="field"><span>Time</span><input class="input" type="time" id="ar-time" value="${esc(S.settings.classStart)}"></label></div>
+    <label class="field"><span>Mark</span><select class="input" id="ar-mark"><option>Present</option><option>Late</option><option>Absent</option><option>Excused</option></select></label>
+    <label class="field"><span>Note</span><input class="input" id="ar-note" maxlength="300" placeholder="Reason (optional)"></label>
+    <div class="sheet-f"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" data-act="save-add">Add record</button></div>`);
+}
+async function saveAddRecord(){ if (await run("apiAddRecord",[S.token,$("#ar-stu").value,$("#ar-mod").value,$("#ar-date").value,$("#ar-time").value,$("#ar-mark").value,$("#ar-note").value.trim()],"Record added.")) closeModal(); }
+function openExport(){
+  const cur=sgt().month, months=[...new Set([cur, ...S.records.map(r=>r.month).filter(Boolean)])].sort().reverse(), sel=S.filters.month||cur;
+  openModal(`<h2>Export CSV</h2>
+    <label class="field"><span>Month</span><select class="input" id="ex-month">${months.map(m=>`<option value="${m}" ${m===sel?"selected":""}>${monthLabel(m)}</option>`).join("")}</select></label>
+    <div class="field"><span>Layout</span>
+      <label class="ex-opt"><input type="radio" name="ex-fmt" value="register" checked><span><b>Monthly register</b><br><span class="muted" style="font-size:.86rem">Like the Register tab in the Google Sheet: No, Student Name, ID (last 4), one column per day with P / L / A / E, then totals and attendance %.</span></span></label>
+      <label class="ex-opt"><input type="radio" name="ex-fmt" value="list"><span><b>Detailed list</b><br><span class="muted" style="font-size:.86rem">One line per record with times, status and notes (uses the filters on this page).</span></span></label></div>
+    <div class="sheet-f"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" type="button" data-act="export-go">Download</button></div>`);
+}
+async function exportCsv(){
+  const fmtSel=document.querySelector('input[name="ex-fmt"]:checked'), format=fmtSel?fmtSel.value:"list", month=($("#ex-month")||{}).value||"";
+  closeModal();
+  try {
+    const r=await api("apiExportCsv", S.token, format==="register"?{format:"register", month}:S.filters);
+    if (!r.count){ toast(format==="register"?"No students to export for that month.":"No records to export with these filters.","bad"); return; }
+    try { const url=URL.createObjectURL(new Blob([r.csv],{type:"text/csv;charset=utf-8"})); const a=document.createElement("a"); a.href=url; a.download=r.filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000); toast(`Downloading ${r.filename}. If nothing downloads, use Copy CSV.`,"ok"); }
+    catch(e){}
+    S.lastCsv=r;
+    openModal(`<h2>CSV ready</h2><p class="muted">${format==="register"?r.count+" students":r.count+" rows"}. If the download didn't start, copy this into Excel or Google Sheets.</p><textarea class="input csv" id="csv-out" readonly>${esc(r.csv.replace(/^﻿/,""))}</textarea>
+      <div class="sheet-f"><button class="btn" data-act="close-modal">Close</button><button class="btn primary" data-act="copy" data-id="csv-out">Copy CSV</button></div>`);
+  } catch(e){ toast(e.message,"bad"); }
+}
+async function exportSheet(btn){
+  btn.disabled=true;
+  try { const r=await api("apiExportToSheet",S.token,S.filters); openModal(`<h2>Export created</h2><p class="muted">${r.count} rows copied to a new tab named <b>${esc(r.name)}</b> in the Google Sheet.</p><a class="btn primary" href="${esc(r.url)}" target="_blank" rel="noopener">Open the sheet</a><div class="sheet-f"><button class="btn" data-act="close-modal">Close</button></div>`); }
+  catch(e){ toast(e.message,"bad"); }
+  btn.disabled=false;
+}
+
+/* ----- admin ----- */
+function adminOverview(){
+  const today=sgt().date, month=sgt().month, mrecs=S.records.filter(r=>r.month===month);
+  // Same rule as the Google Sheet: active students, plus inactive ones only if they have records this month (history stays correct).
+  const hasRec=new Set(mrecs.map(r=>r.studentKey)), studs=S.accounts.filter(a=>a.role==="Student" && (a.active || hasRec.has(a.key)));
+  return `<div class="stack"><div class="panel-h"><div><div class="label">Live · ${dateLabel(today,{weekday:"long",day:"numeric",month:"long"})}</div><h1>Today at a glance</h1></div><div class="bigclock" style="font-size:1.6rem" data-clock>--:--</div></div>
+    ${stats(S.records.filter(r=>r.date===today))}
+    <div class="panel"><div class="panel-h"><h2>Pending</h2>${S.settings.adminCanApprove?chip("Approved","You can approve"):chip("Pending","Lecturer approves")}</div>${pendingCards(canApprove())}</div>
+    <div class="panel"><div class="panel-h"><h2>${monthLabel(month)} by student</h2></div>
+    ${studs.length?`<div class="rows"><div class="srow head"><span>Student</span><span>Present</span><span>Late</span><span>Absent</span><span>Pending</span></div>${studs.map(s=>{ const rs=mrecs.filter(r=>r.studentKey===s.key), n=f=>rs.filter(f).length;
+      return `<div class="srow"><div class="who"><b>${esc(s.displayName)}</b><span>${esc(s.username)}${s.active?"":" · inactive"}</span></div><span class="mono">${n(r=>r.status==="Approved"&&r.mark==="Present")}</span><span class="mono">${n(r=>r.status==="Approved"&&r.mark==="Late")}</span><span class="mono">${n(r=>r.status==="Approved"&&r.mark==="Absent")}</span><span class="mono">${n(r=>r.status==="Pending")}</span></div>`; }).join("")}</div>`
+    :`<div class="empty"><b>No students yet</b><span>Add students in People.</span></div>`}</div></div>`;
+}
+/* ----- students (lecturer + admin) ----- */
+function lockChip(a){
+  if (a.blocked) return chip("Declined","Locked");
+  if (a.waitSec>0) return chip("Late","Waiting "+Math.ceil(a.waitSec/60)+" min");
+  if (a.failCount>0) return `<span class="faint" style="font-size:.8rem">${a.failCount} wrong</span>`;
+  return "";
+}
+function studentsView(){
+  const today=sgt().date, month=sgt().month, q=S.stuQ.trim().toLowerCase();
+  const all=S.accounts.filter(a=>a.role==="Student"&&a.active);
+  const list=all.filter(a=>!q||`${a.displayName} ${a.studentId} ${a.username}`.toLowerCase().includes(q));
+  const todayRec=k=>S.records.filter(r=>r.date===today&&r.studentKey===k);
+  const t={p:0,l:0,pend:0,none:0};
+  all.forEach(a=>{ const rs=todayRec(a.key); if (!rs.length) t.none++; else rs.forEach(r=>{ if (r.status==="Pending") t.pend++; else if (r.status==="Approved"&&r.mark==="Late") t.l++; else if (r.status==="Approved"&&r.mark==="Present") t.p++; }); });
+  const todayChip=a=>{ const rs=todayRec(a.key); if (!rs.length) return `<span class="faint">${isClassDayC(today)?"Not yet":"No class"}</span>`; const r=rs[0]; return r.status==="Approved"?chip(r.mark):r.status==="Declined"?chip("Declined"):chip("Pending"); };
+  const mcount=(a,f)=>S.records.filter(r=>r.month===month&&r.studentKey===a.key&&f(r)).length;
+  return `<div class="stack"><div class="panel-h"><div><div class="label">Class list · ${dateLabel(today,{weekday:"long",day:"numeric",month:"long"})}</div><h1>Students <span class="faint">(${all.length})</span></h1></div>
+      <label class="field" style="min-width:min(260px,100%)"><span>Search</span><input class="input" id="stu-q" value="${esc(S.stuQ)}" placeholder="Name or Student ID" data-stuq></label></div>
+    <div class="stats"><div class="stat"><b>${all.length}</b><span>Total students</span></div><div class="stat s-present"><b>${t.p}</b><span>Present today</span></div><div class="stat s-late"><b>${t.l}</b><span>Late today</span></div><div class="stat s-pending"><b>${t.pend+t.none}</b><span>Pending or not yet</span></div></div>
+    <div class="rows"><div class="srow head stu"><span>#</span><span>Student</span><span>Today</span><span>${esc(monthLabel(month).split(" ")[0].slice(0,3))} P / L / A</span><span></span></div>
+    ${list.length?list.map(a=>`<div class="srow stu"><span class="mono faint">${all.indexOf(a)+1}</span>
+      <div class="who"><b title="${esc(a.displayName)}">${esc(a.displayName)}</b><span class="mono">${esc(a.studentId||a.username)}</span></div>
+      <span>${todayChip(a)}</span>
+      <span class="mono">${mcount(a,r=>r.status==="Approved"&&r.mark==="Present")} / ${mcount(a,r=>r.status==="Approved"&&r.mark==="Late")} / ${mcount(a,r=>r.status==="Approved"&&r.mark==="Absent")}</span>
+      <span class="btns" style="justify-content:flex-end">${(n=>n>=4?chip("Declined",`Absent ${n} · academic`):n>=3?chip("Declined",`Absent ${n} · meet Admin`):n>=2?chip("Late",`Absent ${n}`):"")(mcount(a,r=>r.status==="Approved"&&r.mark==="Absent"))}${lockChip(a)}<button class="btn small" data-act="reset-pw" data-id="${esc(a.key)}">Reset password</button></span></div>`).join("")
+    :`<div class="empty"><b>No students match</b><span>Try a different name or ID.</span></div>`}</div>
+    <p class="hint">Default password for every student is their Student ID. "Reset password" also unlocks an account after too many wrong passwords.</p></div>`;
+}
+
+/* ----- password help requests ----- */
+function requestsView(){
+  const open=S.requests.filter(r=>r.status==="Open"), done=S.requests.filter(r=>r.status!=="Open").slice(0,30);
+  const acc=k=>S.accounts.find(a=>a.key===k)||{};
+  return `<div class="stack"><div class="panel-h"><h1>Password help</h1></div>
+    ${open.length?`<div class="pend-list">${open.map(r=>{ const a=acc(r.userKey); return `<article class="pend" style="border-left-color:var(--red)">
+      <div class="pend-h"><div><b>${esc(r.name)}</b><div class="muted mono" style="font-size:.86rem">${esc(r.username)}</div></div>${a.blocked?chip("Declined","Locked"):a.waitSec>0?chip("Late","Waiting"):""}</div>
+      <div class="hint">Asked ${stampLabel(r.at)}</div>
+      ${r.message?`<div class="note">${esc(r.message)}</div>`:""}
+      <div class="btns"><button class="btn danger" data-act="dismiss-req" data-id="${esc(r.id)}">Dismiss</button><button class="btn ok" style="flex:1" data-act="reset-pw" data-id="${esc(r.userKey)}">Reset password</button></div>
+    </article>`; }).join("")}</div>`
+    :`<div class="rows"><div class="empty"><b>No open requests</b><span>When a student taps "Forgot password?" on the sign-in page, the request appears here.</span></div></div>`}
+    ${done.length?`<div class="panel"><div class="panel-h"><h2>Handled</h2></div><div class="list">${done.map(r=>`<div class="li"><div><b>${esc(r.name)}</b> <span class="mono faint">${esc(r.username)}</span><div class="muted" style="font-size:.86rem">${esc(r.status)} by ${esc(r.handledBy||"—")} · ${stampLabel(r.handledAt)}</div></div><span class="faint" style="font-size:.84rem">${stampLabel(r.at)}</span></div>`).join("")}</div></div>`:""}
+  </div>`;
+}
+function openResetPw(key){
+  const a=S.accounts.find(x=>x.key===key); if (!a) return;
+  openModal(`<h2>Reset password</h2><p class="muted"><b>${esc(a.displayName)}</b> · <span class="mono">${esc(a.studentId||a.username)}</span></p>
+    ${a.blocked?`<div class="note">This account is locked after 10 wrong passwords. Resetting unlocks it.</div>`:a.waitSec>0?`<div class="note">This account is waiting after wrong passwords. Resetting unlocks it now.</div>`:""}
+    <label class="field"><span>New password (leave blank to reset to the Student ID)</span><input class="input" id="rp-pass" autocomplete="off" spellcheck="false" placeholder="${esc(a.username)}"></label>
+    <div class="sheet-f"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" data-act="do-reset-pw" data-id="${esc(key)}">Reset password</button></div>`);
+}
+async function doResetPw(key){
+  const pw=$("#rp-pass").value.trim();
+  const r=await run("apiResetPassword",[S.token,key,pw]);
+  if (r){ closeModal(); openModal(`<h2>Password reset</h2><p class="muted">Tell the student to sign in with:</p><div class="note"><b>Username:</b> <span class="mono">${esc(r.username)}</span><br><b>Password:</b> ${r.usedDefault?`their Student ID (<span class="mono">${esc(r.username)}</span>)`:"the password you just typed"}</div><p class="hint">Ask them to change it under Account after signing in.</p><div class="sheet-f"><button class="btn primary" data-act="close-modal">Done</button></div>`); }
+}
+function openImport(){
+  openModal(`<h2>Import students from Excel</h2><p class="muted">In Excel, select the rows (Student Name, Student ID, and optionally Password), copy, and paste below. Existing students are skipped. If there's no password column, the Student ID is the password.</p>
+    <textarea class="input csv" id="imp-text" placeholder="KUMAR SUMIT&#9;M0636274L&#9;M0636274L"></textarea>
+    <div class="sheet-f"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" data-act="do-import">Import</button></div>`);
+}
+async function doImport(){
+  const r=await run("apiImportStudents",[S.token,$("#imp-text").value]);
+  if (r){ closeModal(); openModal(`<h2>Import finished</h2><p class="muted"><b>${r.added}</b> added · <b>${r.skipped.length}</b> already on the list${r.errors.length?` · <b>${r.errors.length}</b> problems`:""}</p>${r.errors.length?`<div class="note">${r.errors.map(esc).join("<br>")}</div>`:""}<div class="sheet-f"><button class="btn primary" data-act="close-modal">Done</button></div>`); }
+}
+
+function peopleView(){
+  const order={Admin:0,Lecturer:1,Student:2}, acc=S.accounts.slice().sort((a,b)=>(order[a.role]-order[b.role])||a.displayName.localeCompare(b.displayName));
+  return `<div class="stack"><div class="panel-h"><h1>People</h1><div class="btns"><button class="btn" data-act="import-students">Import from Excel</button><button class="btn primary" data-act="add-person">Add student</button></div></div>
+    <div class="list">${acc.map(a=>`<div class="li"><div><b>${esc(a.displayName)}</b> <span class="tag">${esc(a.role)}</span> ${a.active?"":'<span class="tag off">Inactive</span>'}
+      <div class="muted" style="font-size:.86rem">Username: <span class="mono">${esc(a.username)}</span>${a.studentId?` · ID ${esc(a.studentId)}`:""}${a.lastLoginAt?` · last sign-in ${stampLabel(a.lastLoginAt)}`:""}</div></div>
+      <button class="btn small" data-act="edit-person" data-id="${esc(a.key)}">Edit</button></div>`).join("")}</div></div>`;
+}
+function openPerson(key){
+  const a=key?S.accounts.find(x=>x.key===key):null, self=a&&a.key===S.me.key;
+  openModal(`<h2>${a?"Edit "+esc(a.displayName):"Add student"}</h2>
+    <div class="fields"><label class="field"><span>Username</span><input class="input" id="pp-user" value="${esc(a?a.username:"")}" ${a?"readonly":""} autocapitalize="none" spellcheck="false" placeholder="e.g. AungKyaw"></label><label class="field"><span>Full name</span><input class="input" id="pp-name" value="${esc(a?a.displayName:"")}"></label></div>
+    <div class="fields"><label class="field"><span>Student ID (optional)</span><input class="input" id="pp-sid" value="${esc(a?a.studentId:"")}"></label><label class="field"><span>${a?"New password (blank keeps it)":"Password"}</span><input class="input" id="pp-pass" autocomplete="off" spellcheck="false"></label></div>
+    ${a&&!self?`<label class="switch"><input type="checkbox" id="pp-active" ${a.active?"checked":""}><div><b>Account active</b><p class="hint">Inactive accounts can't sign in. Their records stay.</p></div></label>`:""}
+    <p class="hint">Usernames: 3–40 letters, numbers, - or _ (not case-sensitive). Passwords are case-sensitive.</p>
+    <div class="sheet-f"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" data-act="save-person" data-id="${esc(key||"")}">${a?"Save":"Add student"}</button></div>`);
+}
+async function savePerson(key){
+  const act=$("#pp-active"), p={key:key||"", username:$("#pp-user").value.trim(), displayName:$("#pp-name").value.trim(), studentId:$("#pp-sid").value.trim(), password:$("#pp-pass").value};
+  if (act) p.active=act.checked;
+  if (await run("apiSavePerson",[S.token,p], key?"Account saved.":`${p.displayName} added.`)) closeModal();
+}
+function modulesView(){
+  return `<div class="stack"><div class="panel-h"><h1>Modules</h1><button class="btn primary" data-act="add-module">Add module</button></div>
+    <div class="list">${S.modules.map(m=>`<div class="li"><div><b>${esc(m.name)}</b> ${m.code?`<span class="tag">${esc(m.code)}</span>`:""} ${m.active?"":'<span class="tag off">Hidden</span>'}<div class="muted" style="font-size:.86rem">Lecturer: ${esc((S.accounts.find(a=>a.key===m.lecturerKey)||{}).displayName||"—")}</div></div>
+      <button class="btn small" data-act="edit-module" data-id="${esc(m.id)}">Edit</button></div>`).join("")||`<div class="empty"><b>No modules</b><span>Add the first module so students can submit.</span></div>`}</div>
+    <p class="hint">${mode()==="demo"?"":"Changes here also update the module list in the Google Form. "}Old records keep the module name they were submitted under.</p></div>`;
+}
+function openModule(id){
+  const m=id?modById(id):null, lecs=S.accounts.filter(a=>a.role==="Lecturer");
+  openModal(`<h2>${m?"Edit module":"Add module"}</h2><label class="field"><span>Module name</span><input class="input" id="md-name" value="${esc(m?m.name:"")}"></label>
+    <div class="fields"><label class="field"><span>Short code</span><input class="input" id="md-code" value="${esc(m?m.code:"")}" ${m?"readonly":""} placeholder="e.g. IPSC"></label><label class="field"><span>Lecturer</span><select class="input" id="md-lec">${lecs.map(l=>`<option value="${esc(l.key)}" ${m&&m.lecturerKey===l.key?"selected":""}>${esc(l.displayName)}</option>`).join("")}</select></label></div>
+    ${m?`<label class="switch"><input type="checkbox" id="md-active" ${m.active?"checked":""}><div><b>Open for attendance</b><p class="hint">Closed modules disappear from the app${mode()==="demo"?"":" and the Google Form"}.</p></div></label>`:""}
+    <div class="sheet-f"><button class="btn" data-act="close-modal">Cancel</button><button class="btn primary" data-act="save-module" data-id="${esc(id||"")}">${m?"Save":"Add module"}</button></div>`);
+}
+async function saveModule(id){
+  const act=$("#md-active"), m={id:id||"", name:$("#md-name").value.trim(), code:$("#md-code").value.trim(), lecturerKey:$("#md-lec").value, active:act?act.checked:true};
+  if (await run("apiSaveModule",[S.token,m], id?"Module saved.":"Module added.")) closeModal();
+}
+function activityView(){
+  return `<div class="stack"><h1>Activity</h1><div class="list">${S.audit.map(a=>`<div class="li"><div><b>${esc(a.by)}</b> <span class="tag">${esc(a.role)}</span> · ${esc(String(a.action).replace(/_/g," "))}<div class="muted" style="font-size:.86rem;overflow-wrap:anywhere">${esc(a.detail||a.target)}</div></div><span class="faint mono" style="font-size:.84rem">${stampLabel(a.at)}</span></div>`).join("")||`<div class="empty"><b>No activity yet</b></div>`}</div>
+    <p class="hint">Latest 150 actions.${mode()==="demo"?"":" The full log is in the Audit tab of the Google Sheet. Rejected Google Form sign-ins show here as \"form rejected\"."}</p></div>`;
+}
+function systemView(){
+  const m=mode(), s=S.server||{};
+  return `<div class="grid2"><section class="panel stack"><h2>Database connection</h2>${serverLine()}
+      ${m==="remote"&&remoteConn().fromConfig?`<p class="hint">Connected through CONFIG in index.html, so everyone who opens this page shares the same Google Sheet.</p>`:""}
+      ${m==="script"?`<p class="hint">This page is served by Apps Script, so it's connected automatically.</p>`:""}
+      ${m==="demo"?`<button class="btn danger" type="button" data-act="reset-demo">Reset demo data</button>`:""}
+      <button class="btn" type="button" data-act="recheck">Check again</button></section>
+    <section class="panel stack"><h2>How to go live</h2><div class="checks">
+      <div><b>1</b><span>Google Sheet → Extensions → Apps Script. Paste <b>Code.gs</b>, save.</span></div>
+      <div><b>2</b><span>Run <b>setup</b> and allow access. The Execution log prints the <b>ACCESS KEY</b>.</span></div>
+      <div><b>3</b><span>Deploy → New deployment → Web app. Execute as <b>Me</b>, access <b>Anyone</b>. Copy the <b>/exec</b> link.</span></div>
+      <div><b>4</b><span>Put the link and key in <b>CONFIG</b> at the top of index.html for everyone, or paste them above for this browser.</span></div>
+      <div><b>✓</b><span>Check: open the /exec link with <b>?status</b> at the end. It shows <b>"live": true</b>.</span></div></div></section></div>`;
+}
+function adminSettings(){
+  const st=S.settings;
+  return `<div class="grid2"><form class="panel stack" id="set-form"><h2>School &amp; class rules</h2>
+    <label class="field"><span>School name</span><input class="input" id="st-school" value="${esc(st.schoolName)}"></label>
+    <div class="fields"><label class="field"><span>Class starts</span><input class="input" type="time" id="st-start" value="${esc(st.classStart)}"></label><label class="field"><span>Present until (then Late)</span><input class="input" type="time" id="st-until" value="${esc(st.presentUntil)}"></label></div>
+    <div class="fields"><label class="field"><span>Attendance opens</span><input class="input" type="time" id="st-open" value="${esc(st.openAt||"08:30")}"></label><label class="field"><span>Attendance closes (then Absent)</span><input class="input" type="time" id="st-close" value="${esc(st.closeAt||"09:30")}"></label></div>
+    ${mode()==="demo"?`<label class="field"><span>Google Form link (shown to students)</span><input class="input" type="url" id="st-form" value="${esc(st.formUrl)}" placeholder="https://forms.gle/…"></label>`:""}
+    <button class="btn primary" type="submit">Save settings</button>
+    <div class="note">Approval permission: <b>${st.adminCanApprove?"granted":"not granted"}</b>${st.adminCanApprove?` by ${esc(st.adminPermissionBy)} on ${stampLabel(st.adminPermissionAt)}`:""}. Only the lecturer can change this.</div>
+  </form><section class="panel stack"><h2>Links</h2>
+    ${st.appUrl?`<div class="field"><span>Web app link</span>${copyField("app-url",st.appUrl)}</div>`:""}
+    ${st.formUrl?`<div class="field"><span>Google Form (student backup)</span>${copyField("form-url",st.formUrl)}</div>`:`<p class="hint">${mode()==="demo"?"Paste a Google Form link in the settings to show it to students.":"Run setup in Apps Script to create the Google Form."}</p>`}
+    ${S.sheetUrl?`<a class="btn" href="${esc(S.sheetUrl)}" target="_blank" rel="noopener">Open the Google Sheet</a>`:""}
+    <p class="hint">App v${esc(st.appVersion||APP_VERSION)} · Database schema ${esc(st.schemaVersion||1)}</p></section>${passwordPanel()}</div>`;
+}
+async function saveAdminSettings(){
+  const f=$("#st-form");
+  await run("apiSaveSettings",[S.token,{schoolName:$("#st-school").value.trim(), classStart:$("#st-start").value, presentUntil:$("#st-until").value, openAt:$("#st-open").value, closeAt:$("#st-close").value, formUrl:f?f.value.trim():undefined}],"Settings saved.");
+}
+
+/* ---------- clock ---------- */
+let lastDate=sgt().date;
+function tick(){
+  const t=sgt(), clock=fmt12(t.time,true), today=dateLabel(t.date,{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  document.querySelectorAll("[data-clock]").forEach(e=>e.textContent=clock);
+  document.querySelectorAll("[data-today]").forEach(e=>e.textContent=today+" · SGT");
+  document.querySelectorAll("[data-clockinput]").forEach(e=>e.value=clock);
+  if (S.me && S.me.role==="Student" && S.tab==="today"){ const ws=windowState(t.time); if (S.lastWs && S.lastWs!==ws){ S.lastWs=ws; refresh(true); return; } S.lastWs=ws; }
+  const cl=$("[data-closes]"); if (cl){ const left=toSecs(closeAt()+":00")+59-toSecs(t.time); cl.textContent=left>0&&left<=1800?`Closes in ${Math.floor(left/60)}:${String(left%60).padStart(2,"0")} (${fmt12(closeAt()+":00")}).`:`Open until ${fmt12(closeAt()+":00")}.`; }
+  const p=$("[data-predict]"); if (p){ const m=autoMarkFor(t.time,{presentUntil:untilAt()}); p.innerHTML=`${chip(m)} <span>If you submit now you'll be recorded as <b>${m}</b>. Your lecturer confirms it.</span>`;
+    const mb=$("[data-msgbox]"), ml=$("[data-msglabel]");
+    if (mb){ const late=m==="Late"; if (mb.classList.contains("late")!==late){ mb.classList.toggle("late",late); if (ml) ml.textContent= late?`You're late. Tell ${lecturerOfModule(S.todayModule)} why (they can change it to Present)`:`Message to ${lecturerOfModule(S.todayModule)} (optional)`; } } }
+  if (S.loginLock && !S.loginLock.blocked && !S.me){
+    const sec=Math.max(0,Math.ceil((S.loginLock.until-Date.now())/1000)), c=$("[data-lockcount]");
+    if (!sec){ S.loginLock=null; render(); return; }
+    if (c) c.textContent=`${Math.floor(sec/60)}:${String(sec%60).padStart(2,"0")}`;
+  }
+  const n=$("[data-tlnow]"); if (n){ const from=+n.dataset.from, span=+n.dataset.span, mins=t.h*60+t.m+t.s/60; n.style.left=Math.max(0,Math.min(100,(mins-from)/span*100))+"%"; }
+  if (t.date!==lastDate){ lastDate=t.date; if (S.me) render(); }
+}
+
+/* ---------- events ---------- */
+document.addEventListener("submit", e=>{ e.preventDefault(); ({"login-form":doLogin,"att-form":submitAttendance,"pw-form":changePassword,"set-form":saveAdminSettings,"tt-form":saveTimetable,"leave-form":submitLeave}[e.target.id]||(()=>{}))(); });
+document.addEventListener("click", async e=>{
+  const b=e.target.closest("[data-act]"); if (!b) return;
+  const id=b.dataset.id;
+  switch(b.dataset.act){
+    case "tab": S.tab=id; setMenu(false); render(); window.scrollTo({top:0}); if (id==="system") checkServer(); break;
+    case "menu": setMenu(true); render(); { const f=document.querySelector('.d-item[aria-current="page"]')||document.querySelector(".drawer-x"); if (f) f.focus(); } break;
+    case "menu-close": setMenu(false); render(); { const m=document.querySelector(".menu-btn"); if (m) m.focus(); } break;
+    case "logout": setMenu(false); logout(); break;
+    case "approve": review(id,"Approved",b); break;
+    case "decline": review(id,"Declined",b); break;
+    case "open-rec": openRecord(id); break;
+    case "open-thread": openThread(id); break;
+    case "add-block": openBlock(null); break;
+    case "edit-block": openBlock(id); break;
+    case "save-block": saveBlock(id); break;
+    case "del-block": deleteBlock(id); break;
+    case "tt-month": S.ttMonth=id; render(); break;
+    case "view-mc": viewMc(id); break;
+    case "accept-mc": reviewMc(id,"Accepted",b); break;
+    case "reject-mc": reviewMc(id,"Rejected",b); break;
+    case "tab-leave": closeModal(); S.tab="leave"; render(); break;
+    case "send-msg": sendMsg(id,b); break;
+    case "quick-reason": { const ta=$("#f-note"); if (ta){ ta.value=(ta.value.trim()?ta.value.trim()+" ":"")+id+". "; S.drafts.studentNote=ta.value; ta.focus(); } break; }
+    case "cal-day": S.calDay=id; render(); break;
+    case "cal-month": S.calMonth=id; S.calDay=id+"-01"; render(); break;
+    case "cal-pick": S.calStudent=id; render(); window.scrollTo({top:0,behavior:"smooth"}); break;
+    case "toggle-day": toggleDay(id); break;
+    case "clear-ov": clearOverride(id); break;
+    case "save-rec": saveRecord(id); break;
+    case "del-rec": deleteRecord(id); break;
+    case "add-record": openAddRecord(); break;
+    case "save-add": saveAddRecord(); break;
+    case "export": openExport(); break;
+    case "export-go": exportCsv(); break;
+    case "export-sheet": exportSheet(b); break;
+    case "add-person": openPerson(null); break;
+    case "edit-person": openPerson(id); break;
+    case "save-person": savePerson(id); break;
+    case "add-module": openModule(null); break;
+    case "edit-module": openModule(id); break;
+    case "save-module": saveModule(id); break;
+    case "connect": connect(); break;
+    case "forgot": openForgot(); break;
+    case "send-forgot": sendForgot(b); break;
+    case "reset-pw": openResetPw(id); break;
+    case "do-reset-pw": doResetPw(id); break;
+    case "dismiss-req": if (await askConfirm("Dismiss this request?","The student's password stays the same. Use this for duplicate or mistaken requests.","Dismiss")) run("apiDismissRequest",[S.token,id],"Request dismissed."); break;
+    case "import-students": openImport(); break;
+    case "do-import": doImport(); break;
+    case "disconnect": disconnect(); break;
+    case "recheck": checkServer(); break;
+    case "reset-demo": if (await askConfirm("Reset demo data?","Deletes every demo record and puts back the three starting accounts. This only affects this browser.","Reset",true)){ Local.reset(); endSession(""); toast("Demo data reset.","ok"); } break;
+    case "copy": { const el=document.getElementById(id); try { await navigator.clipboard.writeText(el.value); toast("Copied.","ok"); } catch(err){ el.focus(); el.select(); toast("Text selected. Use Copy from your keyboard or menu."); } break; }
+    case "close-modal": closeModal(); break;
+    case "confirm-yes": { const r=S.confirmRes; S.confirmRes=null; closeModal(); r&&r(true); break; }
+    case "confirm-no": closeModal(); break;
+  }
+});
+document.addEventListener("change", e=>{
+  const el=e.target;
+  if (el.id==="perm-admin") run("apiSetAdminPermission",[S.token,el.checked], el.checked?"Admin can now approve.":"Admin approval turned off.");
+  if (el.id==="f-module"){ S.todayModule=el.value; render(); }
+  if (el.dataset.calstu!==undefined){ S.calStudent=el.value; render(); }
+  if (el.id==="lv-from"){ S.drafts.lvFrom=el.value; if (!$("#lv-to").value || $("#lv-to").value<el.value){ S.drafts.lvTo=el.value; $("#lv-to").value=el.value; } }
+  if (el.id==="lv-to") S.drafts.lvTo=el.value;
+  if (el.id==="lv-file"){ const f=el.files&&el.files[0]; readFileForUpload(f).then(r=>{ S.lvFile=r; render(); }).catch(e=>{ S.lvFile=null; toast(e.message,"bad"); render(); }); }
+  if (el.dataset.in==="histMonth"){ S.histMonth=el.value; render(); }
+  if (el.dataset.filter && el.tagName==="SELECT"){ S.filters[el.dataset.filter]=el.value; render(); }
+  if (el.dataset.draft && el.type==="radio"){ (S.drafts[el.dataset.draft] ||= {}).mark=el.value; render(); }
+});
+document.addEventListener("input", e=>{
+  const el=e.target;
+  if (el.dataset.filter==="q"){ S.filters.q=el.value; render(); }
+  if (el.dataset.stuq!==undefined){ S.stuQ=el.value; render(); }
+  if (el.dataset.draftnote){ (S.drafts[el.dataset.draftnote] ||= {}).note=el.value; }
+  if (el.id==="f-note") S.drafts.studentNote=el.value;
+  if (el.id==="lv-msg") S.drafts.lvMsg=el.value;
+  if (el.dataset.lvr) S.drafts["lvr:"+el.dataset.lvr]=el.value;
+  if (el.id && el.id.startsWith("msg-")) S.drafts["msg:"+el.id.slice(4)]=el.value;
+});
+document.addEventListener("keydown", e=>{ if (e.key==="Escape" && !$("#modal").hidden) closeModal(); else if (e.key==="Escape" && S.menuOpen){ setMenu(false); render(); } });
+/** Use the Menu button whenever the tab bar would need sideways scrolling (any screen size). */
+function fitTabs(){
+  const top=document.querySelector(".top"), t=top&&top.querySelector(".tabs"); if (!t) return;
+  top.classList.remove("use-menu");
+  if (getComputedStyle(t).display==="none") return;          // phones: Menu already
+  if (t.scrollWidth > t.clientWidth+1) top.classList.add("use-menu");
+}
+function setMenu(open){ S.menuAnim=!!open && !S.menuOpen; S.menuOpen=!!open; document.body.classList.toggle("noscroll", !!open); if (S.menuAnim) setTimeout(()=>{ S.menuAnim=false; }, 250); }
+window.addEventListener("resize", ()=>{ fitTabs(); const top=document.querySelector(".top"); if (S.menuOpen && top && !top.classList.contains("use-menu") && window.innerWidth>760){ setMenu(false); render(); } });
+
+boot();
+</script>
+<script>
+/* Installable app (GitHub Pages): register the small service worker. Skipped inside Google Apps Script. */
+try { if ("serviceWorker" in navigator && location.protocol==="https:" && !/script\.google|googleusercontent/.test(location.host)) navigator.serviceWorker.register("sw.js").catch(function(){}); } catch(e){}
+</script>
+</body>
+</html>
