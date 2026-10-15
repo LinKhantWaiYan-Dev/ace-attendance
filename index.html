@@ -447,7 +447,7 @@ const CONFIG = {
 };
 /* ========================================================================= */
 
-const APP_VERSION = "2.1";
+const APP_VERSION = "2.2";
 const TZ = "Asia/Singapore";
 const POLL_MS = 15000;
 
@@ -690,7 +690,7 @@ const Local = (() => {
     if (roles && !roles.includes(a.role)) err("You don't have permission to do that.");
     return a;
   }
-  const pubMe = a => Object.assign({key:a.key, username:a.username, displayName:a.displayName, role:a.role, studentId:a.studentId, major:a.major||"", level:a.level||""}, a.role==="Student"?{groupReq:a.groupReq||"", groupReqAt:a.groupReqAt||""}:{}, a.role==="Lecturer"?{teaching:a.teaching||[]}:{});
+  const pubMe = a => Object.assign({key:a.key, username:a.username, displayName:a.displayName, role:a.role, studentId:a.studentId, major:a.major||"", level:a.level||""}, a.role==="Student"?{groupReq:a.groupReq||"", groupReqAt:a.groupReqAt||""}:{}, a.role==="Lecturer"?{teaching:a.teaching||[]}:{}, {seenMsgAt:a.seenMsgAt||"", seenLeaveAt:a.seenLeaveAt||""});
   const pubAcc = a => { const fc=+(a.failCount||0), u=+(a.lockedUntil||0); return {key:a.key, username:a.username, displayName:a.displayName, role:a.role, studentId:a.studentId, active:a.active==="TRUE", lastLoginAt:a.lastLoginAt, failCount:fc, blocked:fc>=MAX_WRONG, waitSec:u>Date.now()?Math.ceil((u-Date.now())/1000):0, major:a.major||"", level:a.level||"", groupAt:a.groupAt||""}; };
   function closeReq(key, by){ db().requests.forEach(r=>{ if (r.userKey===key && r.status==="Open"){ r.status="Done"; r.handledBy=by; r.handledAt=nowStamp(); } }); }
   const pubSettings = st => ({schoolName:st.schoolName, classStart:st.classStart, presentUntil:st.presentUntil, timezone:TZ, adminCanApprove:st.adminCanApprove==="TRUE", adminPermissionBy:st.adminPermissionBy, adminPermissionAt:st.adminPermissionAt, formUrl:st.formUrl||"", appUrl:"", appVersion:APP_VERSION, schemaVersion:4, timetable:Object.assign(ttL(),{blocks:((st.timetable||{}).blocks||[]).map(b=>Object.assign({},b,{lecturerName:(findAcc(b.lecturerKey)||{}).displayName||"", listGroups:(b.students||[]).length?[...new Set(b.students.map(k=>accGroup(findAcc(k)||{})))]:[]}))}), openAt:st.openAt||"08:30", closeAt:st.closeAt||"09:30", classEnd:st.classEnd||"12:00", minAttendance:+(st.minAttendance||80), groupChange:st.groupChange==="approval"?"approval":"free"});
@@ -988,6 +988,11 @@ const Local = (() => {
     apiCheckinStart(){ err("The live classroom code works when the app is connected to the Google Sheet."); },
     apiCheckinStatus(){ err("The live classroom code works when the app is connected to the Google Sheet."); },
     apiCheckinStop(){ return true; },
+    apiMarkSeen(token, kind, upto){
+      const me=auth(token), col=kind==="leave"?"seenLeaveAt":kind==="msgs"?"seenMsgAt":""; if (!col) err("Unknown list.");
+      const now=nowStamp(); let t=String(upto||""); if (!/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(t) || t>now) t=now;
+      if (String(me[col]||"")>=t) return {at:me[col]}; me[col]=t; save(); return {at:t};
+    },
     apiCheckinClaim(){ err("The live classroom code works when the app is connected to the Google Sheet."); },
     apiDeleteBlock(token, id){
       const me=auth(token,["Admin"]), tt=db().settings.timetable; tt.blocks=tt.blocks||[];
@@ -1277,7 +1282,7 @@ async function sendForgot(btn){
 function endSession(msg){
   setMenu(false); store.del(tokenKey());
   S.loginUser=""; S.loginPw="";
-  S.token=null; S.me=null; S.records=[]; S.accounts=[]; S.audit=[]; S.version=null; S.tab=null; S.drafts={}; S.pendingIds=null;
+  S.token=null; S.me=null; S.fresh=null; S.records=[]; S.accounts=[]; S.audit=[]; S.version=null; S.tab=null; S.drafts={}; S.pendingIds=null;
   closeModal(); if (msg) S.loginErr=msg; render();
 }
 function logout(){ const t=S.token; endSession(""); if (t) api("apiLogout", t).catch(()=>{}); }
@@ -1330,6 +1335,7 @@ function render(){
   if (fid){ const el=document.getElementById(fid); if (el){ el.focus({preventScroll:true}); try { if (ss!=null) el.setSelectionRange(ss,se); } catch(e){} } }
   document.title=(S.me && S.me.role!=="Student" && pendingList().length ? `(${pendingList().length}) ` : "")+"ACE Attendance";
   tick();
+  if (autoSeen()) setTimeout(render, 0);
 }
 function masthead(){
   const school=S.settings.schoolName||"American Center for Education";
@@ -1343,7 +1349,7 @@ function masthead(){
 function tabCounts(){
   const pc=S.me.role==="Student"?0:pendingList().length;
   const rc=S.me.role==="Student"?0:S.requests.filter(r=>r.status==="Open").length;
-  const uc=unreadCount(), lc=S.me.role==="Student"?S.leave.filter(x=>x.status!=="Pending"&&!leaveSeen(x)).length:S.leave.filter(x=>x.status==="Pending").length;
+  const uc=unreadCount(), lc=S.me.role==="Student"?S.leave.filter(leaveUnseen).length:S.leave.filter(x=>x.status==="Pending").length;
   const gc=S.me.role==="Admin"?S.accounts.filter(a=>a.role==="Student"&&a.groupReq).length:0;
   return id => (id==="pending"||id==="overview")?pc: id==="classes"?gc: id==="requests"?rc: (id==="records"||id==="history")?uc: id==="leave"?lc: 0;
 }
@@ -1412,9 +1418,32 @@ function copyField(id,value){ return `<div class="copyrow"><input class="input" 
 const seenKey = () => "seen:"+(S.me?S.me.key:"");
 function seenMap(){ try { return JSON.parse(store.get(seenKey())||"{}"); } catch(e){ return {}; } }
 function markSeen(r){ const m=seenMap(); m[r.id]=msgsOf(r).length; store.set(seenKey(), JSON.stringify(m)); }
-function isUnread(r){ const m=msgsOf(r); if (!m.length || m[m.length-1].by===S.me.key) return false; return (seenMap()[r.id]||0) < m.length; }
+function isUnread(r){ const m=msgsOf(r); if (!m.length) return false; const l=m[m.length-1]; if (l.by===S.me.key) return false; if ((seenMap()[r.id]||0) >= m.length) return false; return String(l.at||"") > seenUpTo("msgs"); }
+/* v2.2 notifications: once you open the list, everything in it counts as seen, on this phone and (through your account) on every other device.
+   The NEW labels stay on screen until you leave that page, so you can still see what was new. */
+const wmKey = k => "wm:"+k+":"+(S.me?S.me.key:"");
+const wmField = k => k==="leave" ? "seenLeaveAt" : "seenMsgAt";
+function seenUpTo(k){ const a=String((S.me&&S.me[wmField(k)])||""), b=String(store.get(wmKey(k))||""); return a>b?a:b; }
+const isFresh = id => !!(S.fresh && S.fresh.has(id));
+function leaveUnseen(x){ return x.status!=="Pending" && !leaveSeen(x) && String(x.reviewedAt||"") > seenUpTo("leave"); }
+function markAllSeen(kind){
+  if (!S.me || S.me.mustChange) return false;
+  let top=""; const f=S.fresh||(S.fresh=new Set());
+  if (kind==="msgs") S.records.forEach(r=>{ if (isUnread(r)){ f.add(r.id); const l=msgsOf(r)[msgsOf(r).length-1]; if (String(l.at||"")>top) top=String(l.at||""); } });
+  else S.leave.forEach(x=>{ if (leaveUnseen(x)){ f.add("L"+x.id); if (String(x.reviewedAt||"")>top) top=String(x.reviewedAt||""); } });
+  if (!top) return false;
+  store.set(wmKey(kind), top); if (String(S.me[wmField(kind)]||"")<top) S.me[wmField(kind)]=top;
+  api("apiMarkSeen", S.token, kind, top).catch(()=>{});
+  return true;
+}
+/** Called after every screen draw: the page you are on marks its own notifications as seen. */
+function autoSeen(){
+  if (!S.me || S.me.mustChange) return false;
+  const t=S.tab, k=(t==="history"||t==="records")?"msgs":(t==="leave"&&S.me.role==="Student")?"leave":"";
+  return k ? markAllSeen(k) : false;
+}
 function unreadCount(){ return S.me ? S.records.filter(isUnread).length : 0; }
-function msgTag(r){ const n=msgsOf(r).length; if (!n) return ""; return isUnread(r)?`<span class="chip c-declined">New message</span>`:`<span class="tag">${n} message${n>1?"s":""}</span>`; }
+function msgTag(r){ const n=msgsOf(r).length; if (!n) return ""; return (isUnread(r)||isFresh(r.id))?`<span class="chip c-declined">New message</span>`:`<span class="tag">${n} message${n>1?"s":""}</span>`; }
 function thread(r){
   const m=msgsOf(r);
   if (!m.length) return `<p class="hint">No messages yet.</p>`;
@@ -1881,7 +1910,7 @@ function pendingCards(editable, only){
       ${flagsOf(r).length?`<div class="btns">${flagChips(r)}</div>`:""}
       <div class="mono" style="font-size:.9rem">${dateLabel(r.date)} · ${fmt12(r.submittedTime,true)}</div>
       ${msgsOf(r).length?`<div class="note"><b>${esc(msgsOf(r)[msgsOf(r).length-1].role==="Student"?"Message":"Last message")}:</b> ${esc(msgsOf(r)[msgsOf(r).length-1].text)} ${msgsOf(r).length>1?`<span class="faint">(${msgsOf(r).length})</span>`:""}</div>`:""}
-      <div><button type="button" class="linkbtn" data-act="open-thread" data-id="${esc(r.id)}">${msgsOf(r).length?"Reply to message":"Message student"}</button> ${isUnread(r)?chip("Declined","New"):""}</div>
+      <div><button type="button" class="linkbtn" data-act="open-thread" data-id="${esc(r.id)}">${msgsOf(r).length?"Reply to message":"Message student"}</button> ${(isUnread(r)||isFresh(r.id))?chip("Declined","New"):""}</div>
       ${editable?`<div class="seg" role="radiogroup" aria-label="Mark">${["Present","Late"].map(m=>`<label><input type="radio" name="mk-${esc(r.id)}" id="mk-${esc(r.id)}-${m}" value="${m}" data-draft="${esc(r.id)}" ${mk===m?"checked":""}><span class="m-${m.toLowerCase()}">${m}</span></label>`).join("")}</div>
       <input class="input" id="nt-${esc(r.id)}" placeholder="Reply with the decision (optional, the student sees it)" value="${esc(d.note||"")}" data-draftnote="${esc(r.id)}" maxlength="300">
       <div class="btns"><button class="btn danger" data-act="decline" data-id="${esc(r.id)}">Decline</button><button class="btn ok" style="flex:1" data-act="approve" data-id="${esc(r.id)}">Approve as ${mk}</button></div>`
@@ -2615,7 +2644,7 @@ document.addEventListener("click", async e=>{
   const b=e.target.closest("[data-act]"); if (!b) return;
   const id=b.dataset.id;
   switch(b.dataset.act){
-    case "tab": S.tab=id; setMenu(false); render(); window.scrollTo({top:0}); if (id==="system") checkServer(); break;
+    case "tab": if (S.tab!==id) S.fresh=null; S.tab=id; setMenu(false); render(); window.scrollTo({top:0}); if (id==="system") checkServer(); break;
     case "menu": setMenu(true); render(); { const f=document.querySelector('.d-item[aria-current="page"]')||document.querySelector(".drawer-x"); if (f) f.focus(); } break;
     case "menu-close": setMenu(false); render(); { const m=document.querySelector(".menu-btn"); if (m) m.focus(); } break;
     case "logout": setMenu(false); logout(); break;
